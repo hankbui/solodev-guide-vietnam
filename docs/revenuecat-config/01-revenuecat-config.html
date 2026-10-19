@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cấu hình RevenueCat · Từ A-Z · 2026</title>
+<script>
+  (function () {
+    var q = location.search.indexOf("theme=dark") !== -1;
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches))) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
+<style>
+  :root {
+    --bg: #FAF9F5;
+    --ink: #141413;
+    --card: #FFFFFF;
+    --line: #D1CFC5;
+    --line-soft: #E7E4DA;
+    --mut: #87867F;
+    --mut2: #3D3D3A;
+    --clay: #D97757;
+    --olive: #6B7F51;
+    --rust: #B04A3F;
+    --oat: #F0EEE6;
+    --ok-soft: rgba(107,127,81,.12);
+    --bad-soft: rgba(176,74,63,.10);
+    --clay-soft: rgba(217,119,87,.14);
+    --blue-soft: rgba(59,130,246,.10);
+    --purple-soft: rgba(147,51,234,.10);
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html.dark {
+    --bg: #121110;
+    --ink: #EDEAE3;
+    --card: #1B1A17;
+    --line: #3A3831;
+    --line-soft: #2B2924;
+    --mut: #9A988F;
+    --mut2: #C9C7BD;
+    --oat: #1E1D1A;
+    --clay: #E08A6B;
+    --olive: #8FA269;
+    --rust: #CF6A5C;
+    --ok-soft: rgba(143,162,105,.14);
+    --bad-soft: rgba(207,106,92,.14);
+    --clay-soft: rgba(224,138,107,.16);
+    --blue-soft: rgba(96,165,250,.14);
+    --purple-soft: rgba(168,85,247,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 22px 96px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .sheet { max-width: 1060px; margin: 0 auto; }
+
+  header { margin-bottom: 34px; max-width: 800px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--mut); margin-bottom: 12px;
+  }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 33px; letter-spacing: -.01em; line-height: 1.15; margin-bottom: 12px; }
+  h1 code, p code, li code, td code { font-family: var(--mono); font-size: .86em; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; }
+  .lead { font-size: 14.5px; line-height: 1.62; color: var(--mut2); max-width: 680px; }
+
+  .note { margin: 18px 0; padding: 12px 16px; border: 1.5px solid var(--line); border-left: 4px solid var(--clay); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.6; color: var(--mut2); }
+  .note b { color: var(--ink); }
+  .note.ok { border-left-color: var(--olive); }
+  .note.bad { border-left-color: var(--rust); }
+  .note.info { border-left-color: #3B82F6; }
+  .note.purple { border-left-color: #9333EA; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 30px; }
+  .toc a {
+    font-family: var(--mono); font-size: 12px; color: var(--mut2);
+    text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; background: var(--card); transition: border-color .15s, color .15s;
+  }
+  .toc a:hover { border-color: var(--clay); color: var(--ink); }
+
+  section { margin-top: 46px; }
+  section h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; letter-spacing: -.01em; margin-bottom: 6px; }
+  section h2 .step { color: var(--clay); }
+  .kicker { font-family: var(--mono); font-size: 11px; color: var(--clay); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  section p, section li { font-size: 14.5px; line-height: 1.66; color: var(--mut2); }
+  section p { margin-top: 12px; }
+  ul, ol { margin: 12px 0 0 20px; }
+  li { margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th { font-family: var(--serif); font-weight: 500; color: var(--ink); font-size: 14px; border-bottom: 1.5px solid var(--line); }
+  td { color: var(--mut2); line-height: 1.5; }
+  tr.hl td { background: var(--ok-soft); }
+  tr.hl-bad td { background: var(--bad-soft); }
+  tr.hl-info td { background: var(--blue-soft); }
+  tr.hl-purple td { background: var(--purple-soft); }
+
+  .callout { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: var(--clay-soft); border: 1.5px solid var(--clay); }
+  .callout b { font-family: var(--serif); font-size: 16px; }
+  .callout p { color: var(--ink); }
+  .callout.purple { background: var(--purple-soft); border-color: #9333EA; }
+
+  .steps { counter-reset: step; }
+  .step-card {
+    margin-top: 16px; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: 12px;
+    background: var(--card); position: relative;
+  }
+  .step-card h3 { font-family: var(--serif); font-weight: 500; font-size: 17px; }
+  .step-card h3::before {
+    counter-increment: step;
+    content: "Bước " counter(step);
+    display: inline-block; font-family: var(--mono); font-size: 11px;
+    color: var(--clay); text-transform: uppercase; letter-spacing: .06em;
+    margin-right: 8px; vertical-align: middle;
+  }
+
+  pre { font-family: var(--mono); font-size: 12px; line-height: 1.55; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; color: var(--ink); margin-top: 10px; overflow-x: auto; }
+
+  .canvas {
+    border: 1.5px solid var(--line); border-radius: 14px; background: var(--card);
+    padding: 22px; overflow-x: auto; margin-top: 16px;
+  }
+  svg.flow { display: block; width: 100%; height: auto; }
+  .flow text { font-family: var(--mono); font-size: 12px; fill: var(--ink); pointer-events: none; }
+  .flow .sub { font-size: 9.5px; fill: var(--mut); }
+  .flow .lbl { font-size: 9.5px; fill: var(--mut); }
+  .flow .num { font-size: 13px; font-weight: 700; fill: var(--clay); }
+
+  .badge {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+    margin-right: 4px;
+  }
+  .badge.green { background: var(--ok-soft); border-color: var(--olive); color: var(--olive); }
+  .badge.red { background: var(--bad-soft); border-color: var(--rust); color: var(--rust); }
+  .badge.blue { background: var(--blue-soft); border-color: #3B82F6; color: #3B82F6; }
+  .badge.purple { background: var(--purple-soft); border-color: #9333EA; color: #9333EA; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .tag {
+    font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px;
+    background: var(--oat); border: 1px solid var(--line-soft); margin-right: 5px;
+  }
+  .diagram-box {
+    border: 1.5px solid var(--line); border-radius: 10px; padding: 20px;
+    background: var(--card); margin: 16px 0;
+  }
+  .diagram-box .row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .diagram-box .box {
+    border: 1.5px solid var(--line); border-radius: 8px; padding: 12px 18px;
+    background: var(--oat); text-align: center; font-family: var(--mono); font-size: 12px;
+  }
+  .diagram-box .box.highlight { border-color: var(--clay); background: var(--clay-soft); }
+  .diagram-box .arrow { font-size: 20px; color: var(--mut); }
+
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1.5px solid var(--line); }
+  footer p, footer li { font-size: 13px; line-height: 1.6; color: var(--mut); }
+  footer a { color: var(--clay); text-decoration: none; }
+
+  #theme {
+    position: fixed; top: 16px; right: 18px; z-index: 50;
+    border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; width: 36px; height: 36px; cursor: pointer;
+    font-size: 16px; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  #theme:hover { border-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">RevenueCat Config Guide · 2026 Edition</div>
+  <h1>Cấu hình RevenueCat: Từ A đến Z <span style="font-weight:300">cho mobile subscriptions</span></h1>
+  <p class="lead">
+    Hướng dẫn chi tiết từng bước — từ tạo tài khoản, cấu hình project, products, entitlements,
+    offerings, tích hợp SDK, testing với sandbox, cho đến go-live và theo dõi analytics
+    trên RevenueCat. Bao gồm các cập nhật 2026.
+  </p>
+  <div class="toc">
+    <a href="#s1">1 · Tài khoản & Project</a>
+    <a href="#s2">2 · Entitlements</a>
+    <a href="#s3">3 · Products trên Store</a>
+    <a href="#s4">4 · Kết nối App Store & GP</a>
+    <a href="#s5">5 · Offerings & Packages</a>
+    <a href="#s6">6 · SDK Integration</a>
+    <a href="#s7">7 · Webhooks</a>
+    <a href="#s8">8 · Testing</a>
+    <a href="#s9">9 · Analytics</a>
+    <a href="#s10">10 · Customer Mgmt</a>
+    <a href="#checklist">✓ Checklist</a>
+  </div>
+</header>
+
+<section id="flow">
+  <div class="kicker">Tổng quan</div>
+  <h2>RevenueCat hoạt động như thế nào?</h2>
+
+  <div class="diagram-box">
+    <div class="row">
+      <div class="box highlight">App của bạn</div>
+      <div class="arrow">→</div>
+      <div class="box">RevenueCat SDK</div>
+      <div class="arrow">→</div>
+      <div class="box">RevenueCat Server</div>
+      <div class="arrow">→</div>
+      <div class="box" style="display:flex;flex-direction:column;gap:6px;">
+        <span>App Store</span>
+        <span style="border-top:1px solid var(--line-soft);padding-top:6px;">Google Play</span>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--mut);font-family:var(--mono);">
+      SDK cung cấp offerings → User purchase → SDK gửi receipt → Server validate → Cấp entitlement
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="note ok" style="margin:0;">
+      <b>Tại sao dùng RevenueCat?</b>
+      <ul style="margin-top:6px;font-size:13px;">
+        <li>Một SDK cho cả iOS + Android</li>
+        <li>Tự động validate receipt</li>
+        <li>Theo dõi subscription lifecycle</li>
+        <li>A/B test offerings</li>
+        <li>Webhooks cho backend</li>
+      </ul>
+    </div>
+    <div class="note info" style="margin:0;border-left-color:#3B82F6;">
+      <b>Pricing 2026</b>
+      <ul style="margin-top:6px;font-size:13px;">
+        <li><b>Free:</b> $0/tháng (≤ $10k MRR)</li>
+        <li><b>Pro:</b> $83/tháng (bill annually)</li>
+        <li><b>Enterprise:</b> Custom</li>
+        <li>Miễn phí để bắt đầu — upgrade khi cần</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="kicker">Bước 1</div>
+  <h2>Tạo tài khoản & Project</h2>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Đăng ký RevenueCat</h3>
+      <p>Truy cập <b>app.revenuecat.com</b> → đăng ký bằng email, GitHub hoặc Google → xác nhận email.</p>
+    </div>
+    <div class="step-card">
+      <h3>Tạo Project mới</h3>
+      <p><b>Dashboard → Projects → New Project.</b> Điền:</p>
+      <ul>
+        <li><b>Project Name:</b> Business Law VN</li>
+        <li><b>Platform:</b> iOS + Android</li>
+        <li><b>Bundle ID:</b> com.hankbui.businesslaw</li>
+        <li><b>Package Name:</b> com.hankbui.businesslaw</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Cấu hình Project Settings</h3>
+      <p><b>Project Settings → General → Display Name.</b> Kiểm tra <b>API Keys</b> — có sẵn Public + Secret keys.</p>
+      <div class="note bad" style="margin:8px 0 0;">
+        ⚠️ <b>Secret Key</b> (prefix <code>sk_</code>) — không bao giờ nhúng trong client app. Chỉ dùng ở backend.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="kicker">Bước 2</div>
+  <h2>Cấu hình Entitlements</h2>
+
+  <p><b>Entitlement</b> = quyền truy cập user nhận được khi mua product.</p>
+
+  <div class="diagram-box" style="text-align:center;">
+    <div class="row">
+      <div class="box" style="display:flex;flex-direction:column;gap:4px;">
+        <b>Product</b>
+        <span style="font-size:10px;">com.hankbui.premium.monthly</span>
+      </div>
+      <div class="arrow">→ cấp →</div>
+      <div class="box highlight" style="display:flex;flex-direction:column;gap:4px;">
+        <b>Entitlement</b>
+        <span style="font-size:10px;">premium</span>
+      </div>
+      <div class="arrow">→ mở →</div>
+      <div class="box" style="display:flex;flex-direction:column;gap:4px;">
+        <b>Tính năng Premium</b>
+        <span style="font-size:10px;">Offline access, Advanced search</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Tạo Entitlement</h3>
+      <p><b>RevenueCat Dashboard → Entitlements → + New.</b> Ví dụ:</p>
+      <ul>
+        <li><b>Identifier:</b> <code>premium</code></li>
+        <li><b>Display Name:</b> Premium</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Liên kết Product → Entitlement</h3>
+      <p>Sau đó ở bước tạo Product, bạn map product ID → entitlement này. Một product có thể cấp nhiều entitlements.</p>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Identifier</th><th>Display Name</th><th>Mô tả</th></tr>
+    <tr><td><code>premium</code></td><td>Premium</td><td>Toàn bộ tính năng cao cấp</td></tr>
+    <tr><td><code>pro</code></td><td>Pro</td><td>Tính năng nâng cao</td></tr>
+    <tr><td><code>remove_ads</code></td><td>Remove Ads</td><td>Xoá quảng cáo</td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <div class="kicker">Bước 3</div>
+  <h2>Tạo Products trên App Store & Google Play</h2>
+
+  <p>Trước khi kết nối RevenueCat, bạn cần tạo sản phẩm trên cả hai store trước.</p>
+
+  <h3 style="margin-top:16px;">App Store Connect</h3>
+  <p><b>My Apps → chọn app → In-App Purchases → +</b></p>
+  <table>
+    <tr><th>Product</th><th>Type</th><th>Identifier</th></tr>
+    <tr><td>Premium Monthly</td><td>Auto-Renewable Subscription</td><td><code>com.hankbui.businesslaw.premium.monthly</code></td></tr>
+    <tr class="hl"><td>Premium Yearly</td><td>Auto-Renewable Subscription</td><td><code>com.hankbui.businesslaw.premium.yearly</code></td></tr>
+    <tr><td>Lifetime</td><td>Non-Consumable</td><td><code>com.hankbui.businesslaw.lifetime</code></td></tr>
+  </table>
+  <div class="note ok" style="margin-top:8px;">
+    <b>Subscription Group:</b> Nhóm monthly + yearly vào cùng group "Premium" để user upgrade/downgrade dễ dàng.
+  </div>
+
+  <h3 style="margin-top:16px;">Google Play Console</h3>
+  <p><b>Monetize → Products → Subscriptions / In-app Products → Create</b></p>
+  <table>
+    <tr><th>Product</th><th>Type</th><th>ID</th></tr>
+    <tr><td>Premium Monthly</td><td>Subscription</td><td><code>premium_monthly</code></td></tr>
+    <tr class="hl"><td>Premium Yearly</td><td>Subscription</td><td><code>premium_yearly</code></td></tr>
+    <tr><td>Lifetime</td><td>In-app Product</td><td><code>lifetime</code></td></tr>
+  </table>
+
+  <div class="note info" style="margin-top:8px;">
+    <b>Google Play Base Plan:</b> Cấu hình base plan cho mỗi subscription — chọn billing period (monthly/yearly) và giá.
+  </div>
+</section>
+
+<section id="s4">
+  <div class="kicker">Bước 4</div>
+  <h2>Kết nối App Store & Google Play với RevenueCat</h2>
+
+  <h3>4.1 Kết nối App Store</h3>
+  <div class="steps">
+    <div class="step-card">
+      <h3>Lấy App-Specific Shared Secret</h3>
+      <p><b>App Store Connect → My Apps → chọn app → App Information</b> → copy <b>App-Specific Shared Secret</b>.</p>
+    </div>
+    <div class="step-card">
+      <h3>Dán vào RevenueCat</h3>
+      <p><b>RevenueCat Dashboard → Project → App Store Connect → Configure</b> → paste Shared Secret → Save.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">4.2 Kết nối Google Play</h3>
+  <div class="steps">
+    <div class="step-card">
+      <h3>Tạo Service Account</h3>
+      <p><b>Google Play Console → Setup → API Access → Create Service Account</b> → làm theo hướng dẫn → lên Google Cloud Console → tạo JSON key.</p>
+    </div>
+    <div class="step-card">
+      <h3>Upload JSON lên RevenueCat</h3>
+      <p><b>RevenueCat Dashboard → Project → Google Play → Configure</b> → upload file JSON → Save.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">4.3 Map Products (Store-Specific IDs)</h3>
+  <p>Sau khi kết nối, RevenueCat tự fetch products từ store. Bạn cần map:</p>
+  <table>
+    <tr><th>RC Product ID</th><th>Apple ID</th><th>Google ID</th><th>Entitlement</th></tr>
+    <tr><td><code>rc_premium_monthly</code></td><td><code>com.hankbui...monthly</code></td><td><code>premium_monthly</code></td><td><code>premium</code></td></tr>
+    <tr class="hl"><td><code>rc_premium_yearly</code></td><td><code>com.hankbui...yearly</code></td><td><code>premium_yearly</code></td><td><code>premium</code></td></tr>
+    <tr><td><code>rc_lifetime</code></td><td><code>com.hankbui...lifetime</code></td><td><code>lifetime</code></td><td><code>premium</code></td></tr>
+  </table>
+</section>
+
+<section id="s5">
+  <div class="kicker">Bước 5</div>
+  <h2>Tạo Offerings & Packages</h2>
+
+  <p><b>Offering</b> = nhóm Packages bạn offer cho user. <b>Package</b> = một lựa chọn mua cụ thể.</p>
+
+  <div class="diagram-box" style="text-align:center;">
+    <div class="row" style="flex-direction:column;gap:8px;">
+      <div class="box highlight" style="min-width:200px;">Offering "default"</div>
+      <div class="arrow" style="transform:rotate(90deg);display:block;">↓</div>
+      <div class="row">
+        <div class="box" style="min-width:150px;">Package "monthly"<br><span style="font-size:10px;">$9.99/month</span></div>
+        <div class="box" style="min-width:150px;">Package "yearly"<br><span style="font-size:10px;">$79.99/year ★</span></div>
+        <div class="box" style="min-width:150px;">Package "lifetime"<br><span style="font-size:10px;">$149.99</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Tạo Packages</h3>
+      <p><b>Offerings → Packages → + New.</b> Mỗi package gồm:</p>
+      <ul>
+        <li><b>Identifier:</b> <code>monthly</code></li>
+        <li><b>Description:</b> Premium Monthly</li>
+        <li><b>iOS Product:</b> <code>rc_premium_monthly</code></li>
+        <li><b>Android Product:</b> <code>rc_premium_monthly</code></li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Tạo Offering</h3>
+      <p><b>Offerings → + New.</b> Điền:</p>
+      <ul>
+        <li><b>Identifier:</b> <code>default</code></li>
+        <li><b>Description:</b> Default Offering</li>
+        <li>Thêm packages: monthly, yearly, lifetime</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">5.1 A/B Testing với Experiments (2026)</h3>
+  <div class="callout purple">
+    <b>RevenueCat Experiments 2.0</b>
+    <p>RevenueCat 2026 hỗ trợ A/B test offerings: tạo experiment → chọn baseline + variants → phân chia % user → xem conversion rate, revenue mỗi variant.</p>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="kicker">Bước 6</div>
+  <h2>Tích hợp SDK RevenueCat</h2>
+
+  <h3>6.1 Cài đặt</h3>
+
+  <div class="grid-2">
+    <div>
+      <p><b>React Native / Expo:</b></p>
+      <pre>npm install react-native-purchases
+npx pod-install</pre>
+    </div>
+    <div>
+      <p><b>iOS (Swift):</b></p>
+      <pre>// Podfile
+pod 'Purchases', '~> 7.0'</pre>
+    </div>
+    <div>
+      <p><b>Android (Kotlin):</b></p>
+      <pre>// build.gradle
+implementation "com.revenuecat.purchases:purchases:7.0.0"</pre>
+    </div>
+    <div>
+      <p><b>Flutter:</b></p>
+      <pre>flutter pub add purchases_flutter</pre>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">6.2 Cấu hình SDK</h3>
+  <pre>import Purchases from 'react-native-purchases';
+
+// App startup
+await Purchases.configure({
+  apiKey: 'public_ios_key',   // Public key từ RC Dashboard
+  appUserID: userID,           // User ID của bạn (optional)
+});</pre>
+
+  <h3 style="margin-top:16px;">6.3 Lấy Offerings & Purchase</h3>
+  <pre>// Lấy offerings
+const offerings = await Purchases.getOfferings();
+if (offerings.current !== null) {
+  const monthly = offerings.current.monthly;
+  const yearly = offerings.current.yearly;
+}
+
+// Purchase
+const { customerInfo } = await Purchases.purchasePackage(monthly);
+
+// Restore purchases
+const restore = await Purchases.restorePurchases();</pre>
+
+  <h3 style="margin-top:16px;">6.4 Lắng nghe thay đổi</h3>
+  <pre>Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+  const isPremium = customerInfo.entitlements.active['premium'] !== undefined;
+  // Cập nhật UI — mở/tính năng premium
+});</pre>
+
+  <div class="note bad">
+    ⚠️ <b>Phân biệt API Key:</b> Public key (prefix <code>public_</code>) dùng trong client SDK. Secret key (prefix <code>sk_</code>) chỉ dùng ở backend — không bao giờ nhúng vào app.
+  </div>
+</section>
+
+<section id="s7">
+  <div class="kicker">Bước 7</div>
+  <h2>Cấu hình Webhooks & Integrations</h2>
+
+  <h3>7.1 Tạo Webhook</h3>
+  <p><b>RevenueCat Dashboard → Integrations → Webhooks → + New.</b></p>
+  <table>
+    <tr><th>Trường</th><th>Ví dụ</th></tr>
+    <tr><td>Endpoint URL</td><td><code>https://api.yourbackend.com/revenuecat/webhook</code></td></tr>
+    <tr><td>Authorization Header</td><td><code>Bearer your_secret_token</code></td></tr>
+    <tr><td>Events</td><td>Select all</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">7.2 Webhook Events quan trọng</h3>
+  <table>
+    <tr><th>Event</th><th>Khi nào</th><th>Backend cần làm</th></tr>
+    <tr><td><code>INITIAL_PURCHASE</code></td><td>User mua lần đầu</td><td>Cấp quyền</td></tr>
+    <tr class="hl"><td><code>RENEWAL</code></td><td>Gia hạn tự động</td><td>Gia hạn quyền</td></tr>
+    <tr><td><code>CANCELLATION</code></td><td>User huỷ</td><td>Log — sẽ mất quyền khi hết hạn</td></tr>
+    <tr class="hl"><td><code>EXPIRATION</code></td><td>Hết hạn</td><td>Thu hồi quyền</td></tr>
+    <tr><td><code>PRODUCT_CHANGE</code></td><td>Upgrade/downgrade</td><td>Cập nhật quyền</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">7.3 Xử lý Webhook (Node.js)</h3>
+  <pre>app.post('/revenuecat/webhook', async (req, res) => {
+  const event = req.body.event;
+
+  switch (event.type) {
+    case 'INITIAL_PURCHASE':
+    case 'RENEWAL':
+      await grantPremiumAccess(event.app_user_id);
+      break;
+    case 'EXPIRATION':
+      await revokePremiumAccess(event.app_user_id);
+      break;
+  }
+  res.status(200).send('OK');
+});</pre>
+</section>
+
+<section id="s8">
+  <div class="kicker">Bước 8</div>
+  <h2>Testing với Sandbox & StoreKit</h2>
+
+  <h3>8.1 Sandbox Testing — Apple</h3>
+  <p><b>App Store Connect → Users and Access → Sandbox Testers → +</b> → tạo account → trên device vào <b>Settings → App Store → Sandbox Account</b> → sign in → mua IAP (sandbox, không tính phí).</p>
+
+  <h3>8.2 Sandbox Testing — Google Play</h3>
+  <p><b>Google Play Console → Setup → License Testing</b> → thêm test email → add test account trên device → mua subscription.</p>
+
+  <h3>8.3 StoreKit Configuration (Xcode — local testing)</h3>
+  <p>Không cần network, test IAP ngay trên simulator:</p>
+  <pre>Xcode → File → New → File → StoreKit Configuration
+→ Thêm product IDs khớp với RevenueCat
+→ Scheme → Edit Scheme → Options → StoreKit Configuration → chọn file</pre>
+
+  <h3>8.4 Testing Checklist</h3>
+  <div class="grid-2">
+    <div>
+      <ul style="font-size:13px;">
+        <li>Sandbox purchase iOS ✓</li>
+        <li>Sandbox purchase Android ✓</li>
+        <li>Subscription renewal ✓</li>
+        <li>Subscription cancellation ✓</li>
+        <li>Restore purchases ✓</li>
+      </ul>
+    </div>
+    <div>
+      <ul style="font-size:13px;">
+        <li>Offerings hiển thị đúng ✓</li>
+        <li>Entitlements active sau purchase ✓</li>
+        <li>Webhook nhận events ✓</li>
+        <li>Upgrade/Downgrade ✓</li>
+        <li>Grace period ✓</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="s9">
+  <div class="kicker">Bước 9</div>
+  <h2>Analytics & Charts</h2>
+
+  <p>RevenueCat Dashboard cung cấp real-time metrics:</p>
+
+  <table>
+    <tr><th>Metric</th><th>Mô tả</th><th>Ví dụ</th></tr>
+    <tr><td><b>MRR</b></td><td>Monthly Recurring Revenue</td><td>$4,532</td></tr>
+    <tr><td><b>Active Subscribers</b></td><td>Số subscriber đang active</td><td>213</td></tr>
+    <tr><td><b>Trial Conversions</b></td><td>% trial → paid</td><td>28%</td></tr>
+    <tr><td><b>Churn Rate</b></td><td>% user huỷ</td><td>8%</td></tr>
+    <tr><td><b>LTV</b></td><td>Lifetime Value</td><td>$24.50</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">9.1 Cohorts</h3>
+  <table>
+    <tr><th>Cohort</th><th>Subscribers</th><th>Trial → Paid</th><th>Churn (30d)</th><th>LTV</th></tr>
+    <tr><td>Oct 2026 W1</td><td>45</td><td>28%</td><td>8%</td><td>$24.50</td></tr>
+    <tr><td>Sep 2026 W4</td><td>52</td><td>32%</td><td>6%</td><td>$22.10</td></tr>
+    <tr><td>Sep 2026 W3</td><td>38</td><td>25%</td><td>10%</td><td>$19.80</td></tr>
+  </table>
+</section>
+
+<section id="s10">
+  <div class="kicker">Bước 10</div>
+  <h2>Customer Management</h2>
+
+  <p><b>RevenueCat Dashboard → Customers → Search</b> bằng App User ID, email, hoặc Original App User ID.</p>
+
+  <h3 style="margin-top:16px;">Customer Detail</h3>
+  <table>
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Active Entitlements</td><td><span class="badge green">premium</span></td></tr>
+    <tr><td>Active Subscription</td><td>Premium Monthly</td></tr>
+    <tr><td>Status</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>Next Renewal Date</td><td>2026-11-15</td></tr>
+    <tr><td>Total Lifetime Revenue</td><td>$89.91</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">Customer Actions</h3>
+  <table>
+    <tr><th>Action</th><th>Mô tả</th></tr>
+    <tr><td><b>Grant Entitlement</b></td><td>Cấp quyền thủ công cho beta tester, compensation</td></tr>
+    <tr><td><b>Revoke Entitlement</b></td><td>Thu hồi quyền</td></tr>
+    <tr><td><b>Transfer Subscription</b></td><td>Chuyển subscription giữa các device/platform</td></tr>
+    <tr><td><b>Delete Customer</b></td><td>Xoá dữ liệu (GDPR compliance)</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">Anonymous Users</h3>
+  <div class="note info">
+    <b>User chưa đăng ký?</b> RevenueCat hỗ trợ anonymous user — tự sinh appUserID. Khi user đăng ký, gọi <code>logIn('user_id')</code> để merge dữ liệu subscription.
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="kicker">Trước khi go-live</div>
+  <h2>Checklist Go-Live</h2>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ Configuration</h3>
+      <ul style="font-size:13px;">
+        <li>RevenueCat Project created</li>
+        <li>App Store IAP products created</li>
+        <li>Google Play products created</li>
+        <li>App Store Shared Secret connected</li>
+        <li>Google Play Service Account connected</li>
+        <li>Products mapped in RevenueCat</li>
+        <li>Entitlements created</li>
+        <li>Offerings + Packages created</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ SDK & Backend</h3>
+      <ul style="font-size:13px;">
+        <li>SDK installed + configured</li>
+        <li>getOfferings() works</li>
+        <li>purchasePackage() works</li>
+        <li>restorePurchases() works</li>
+        <li>addCustomerInfoUpdateListener</li>
+        <li>Webhook endpoint ready</li>
+        <li>Webhook events processed</li>
+        <li>Secret key stored securely</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note ok" style="margin-top:16px;">
+    <b>Go-Live:</b> Sau khi testing OK → Submit app lên App Store + Google Play → Monitor Dashboard trong 48h đầu → Kiểm tra webhook event sau purchase thật đầu tiên.
+  </div>
+</section>
+
+<footer>
+  <h2 style="font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:10px;">Nguồn tham khảo</h2>
+  <ul>
+    <li><a href="https://app.revenuecat.com">RevenueCat Dashboard</a></li>
+    <li><a href="https://www.revenuecat.com/docs">RevenueCat Documentation</a></li>
+    <li><a href="https://www.revenuecat.com/reference">RevenueCat API Reference</a></li>
+    <li><a href="https://github.com/RevenueCat/react-native-purchases">RevenueCat React Native SDK</a></li>
+    <li><a href="https://github.com/RevenueCat/purchases-ios">RevenueCat iOS SDK</a></li>
+    <li><a href="https://github.com/RevenueCat/purchases-android">RevenueCat Android SDK</a></li>
+    <li><a href="https://www.revenuecat.com/pricing">RevenueCat Pricing</a></li>
+    <li><a href="https://www.revenuecat.com/docs/webhooks">RevenueCat Webhooks</a></li>
+    <li><a href="https://www.revenuecat.com/docs/experiments">RevenueCat Experiments</a></li>
+  </ul>
+  <p style="margin-top:12px">⚠️ Mốc dữ liệu 10/2026. Thông tin tham khảo — kiểm tra tài liệu RevenueCat mới nhất trước khi triển khai.</p>
+</footer>
+
+</div>
+
+<button id="theme" type="button" aria-label="Dark mode toggle" title="Dark/Light">☾</button>
+
+<script>
+  var btn = document.getElementById("theme");
+  function sync() { btn.textContent = document.documentElement.classList.contains("dark") ? "☀" : "☾"; }
+  btn.addEventListener("click", function () {
+    var want = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", want);
+    try { localStorage.setItem("theme", want ? "dark" : "light"); } catch (e) {}
+    sync();
+  });
+  sync();
+</script>
+</body>
+</html>

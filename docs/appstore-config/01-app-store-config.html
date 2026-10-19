@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cấu hình App Store Connect · Từ A-Z · 2026</title>
+<script>
+  (function () {
+    var q = location.search.indexOf("theme=dark") !== -1;
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches))) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
+<style>
+  :root {
+    --bg: #FAF9F5;
+    --ink: #141413;
+    --card: #FFFFFF;
+    --line: #D1CFC5;
+    --line-soft: #E7E4DA;
+    --mut: #87867F;
+    --mut2: #3D3D3A;
+    --clay: #D97757;
+    --olive: #6B7F51;
+    --rust: #B04A3F;
+    --oat: #F0EEE6;
+    --ok-soft: rgba(107,127,81,.12);
+    --bad-soft: rgba(176,74,63,.10);
+    --clay-soft: rgba(217,119,87,.14);
+    --blue-soft: rgba(59,130,246,.10);
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html.dark {
+    --bg: #121110;
+    --ink: #EDEAE3;
+    --card: #1B1A17;
+    --line: #3A3831;
+    --line-soft: #2B2924;
+    --mut: #9A988F;
+    --mut2: #C9C7BD;
+    --oat: #1E1D1A;
+    --clay: #E08A6B;
+    --olive: #8FA269;
+    --rust: #CF6A5C;
+    --ok-soft: rgba(143,162,105,.14);
+    --bad-soft: rgba(207,106,92,.14);
+    --clay-soft: rgba(224,138,107,.16);
+    --blue-soft: rgba(96,165,250,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 22px 96px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .sheet { max-width: 1060px; margin: 0 auto; }
+
+  header { margin-bottom: 34px; max-width: 800px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--mut); margin-bottom: 12px;
+  }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 33px; letter-spacing: -.01em; line-height: 1.15; margin-bottom: 12px; }
+  h1 code, p code, li code, td code { font-family: var(--mono); font-size: .86em; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; }
+  .lead { font-size: 14.5px; line-height: 1.62; color: var(--mut2); max-width: 680px; }
+
+  .note { margin: 18px 0; padding: 12px 16px; border: 1.5px solid var(--line); border-left: 4px solid var(--clay); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.6; color: var(--mut2); }
+  .note b { color: var(--ink); }
+  .note.ok { border-left-color: var(--olive); }
+  .note.bad { border-left-color: var(--rust); }
+  .note.info { border-left-color: #3B82F6; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 30px; }
+  .toc a {
+    font-family: var(--mono); font-size: 12px; color: var(--mut2);
+    text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; background: var(--card); transition: border-color .15s, color .15s;
+  }
+  .toc a:hover { border-color: var(--clay); color: var(--ink); }
+
+  section { margin-top: 46px; }
+  section h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; letter-spacing: -.01em; margin-bottom: 6px; }
+  section h2 .step { color: var(--clay); }
+  .kicker { font-family: var(--mono); font-size: 11px; color: var(--clay); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  section p, section li { font-size: 14.5px; line-height: 1.66; color: var(--mut2); }
+  section p { margin-top: 12px; }
+  ul, ol { margin: 12px 0 0 20px; }
+  li { margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th { font-family: var(--serif); font-weight: 500; color: var(--ink); font-size: 14px; border-bottom: 1.5px solid var(--line); }
+  td { color: var(--mut2); line-height: 1.5; }
+  tr.hl td { background: var(--ok-soft); }
+  tr.hl-bad td { background: var(--bad-soft); }
+  tr.hl-info td { background: var(--blue-soft); }
+
+  .callout { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: var(--clay-soft); border: 1.5px solid var(--clay); }
+  .callout b { font-family: var(--serif); font-size: 16px; }
+  .callout p { color: var(--ink); }
+
+  .steps { counter-reset: step; }
+  .step-card {
+    margin-top: 16px; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: 12px;
+    background: var(--card); position: relative;
+  }
+  .step-card h3 { font-family: var(--serif); font-weight: 500; font-size: 17px; }
+  .step-card h3::before {
+    counter-increment: step;
+    content: "Bước " counter(step);
+    display: inline-block; font-family: var(--mono); font-size: 11px;
+    color: var(--clay); text-transform: uppercase; letter-spacing: .06em;
+    margin-right: 8px; vertical-align: middle;
+  }
+
+  pre { font-family: var(--mono); font-size: 12px; line-height: 1.55; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; color: var(--ink); margin-top: 10px; overflow-x: auto; }
+
+  .canvas {
+    border: 1.5px solid var(--line); border-radius: 14px; background: var(--card);
+    padding: 22px; overflow-x: auto; margin-top: 16px;
+  }
+  svg.flow { display: block; width: 100%; height: auto; }
+  .flow text { font-family: var(--mono); font-size: 12px; fill: var(--ink); pointer-events: none; }
+  .flow .sub { font-size: 9.5px; fill: var(--mut); }
+  .flow .lbl { font-size: 9.5px; fill: var(--mut); }
+  .flow .num { font-size: 13px; font-weight: 700; fill: var(--clay); }
+  .node rect, .node path { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+  .node rect.rx { rx: 8; }
+  .node.term rect { fill: var(--oat); rx: 22; }
+  .node.ok rect { fill: var(--ok-soft); stroke: var(--olive); }
+  .node.bad rect { fill: var(--bad-soft); stroke: var(--rust); }
+  .node.highlight rect { stroke: var(--clay); stroke-width: 2.5; }
+
+  .badge {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+    margin-right: 4px;
+  }
+  .badge.green { background: var(--ok-soft); border-color: var(--olive); color: var(--olive); }
+  .badge.red { background: var(--bad-soft); border-color: var(--rust); color: var(--rust); }
+  .badge.blue { background: var(--blue-soft); border-color: #3B82F6; color: #3B82F6; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1.5px solid var(--line); }
+  footer p, footer li { font-size: 13px; line-height: 1.6; color: var(--mut); }
+  footer a { color: var(--clay); text-decoration: none; }
+
+  #theme {
+    position: fixed; top: 16px; right: 18px; z-index: 50;
+    border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; width: 36px; height: 36px; cursor: pointer;
+    font-size: 16px; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  #theme:hover { border-color: var(--clay); }
+
+  .tag {
+    font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px;
+    background: var(--oat); border: 1px solid var(--line-soft); margin-right: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">App Store Connect Config Guide · 2026 Edition</div>
+  <h1>Cấu hình App Store Connect: Từ A đến Z</h1>
+  <p class="lead">
+    Hướng dẫn chi tiết từng bước — từ đăng ký Apple Developer, tạo app record, cấu hình IAP,
+    privacy labels, build, TestFlight, cho đến submit review và phát hành. 
+    Bao gồm các cập nhật mới nhất của năm 2026.
+  </p>
+  <div class="toc">
+    <a href="#flow">📊 Flow tổng quan</a>
+    <a href="#s1">1 · Dev Program</a>
+    <a href="#s2">2 · Tax & Banking</a>
+    <a href="#s3">3 · App Record</a>
+    <a href="#s4">4 · IAP</a>
+    <a href="#s5">5 · Privacy</a>
+    <a href="#s6">6 · Build</a>
+    <a href="#s7">7 · TestFlight</a>
+    <a href="#s8">8 · App Review</a>
+    <a href="#s9">9 · Release</a>
+    <a href="#s10">10 · Pricing</a>
+    <a href="#checklist">✓ Checklist</a>
+  </div>
+</header>
+
+<section id="flow">
+  <div class="kicker">Tổng quan</div>
+  <h2>Dòng chảy cấu hình App Store Connect <span style="color:var(--mut);font-size:15px;">(bấm từng bước → xem chi tiết)</span></h2>
+
+  <div class="canvas">
+    <svg class="flow" viewBox="0 0 720 860">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/>
+        </marker>
+      </defs>
+
+      <g class="node term">
+        <rect x="260" y="10" width="200" height="42"/>
+        <text x="360" y="36" text-anchor="middle">Apple ID sẵn sàng</text>
+      </g>
+
+      <g class="node" data-section="s1">
+        <rect class="rx" x="230" y="74" width="260" height="58"/>
+        <text x="360" y="94" text-anchor="middle"><tspan class="num">1</tspan>  Apple Developer Program</text>
+        <text class="sub" x="360" y="118" text-anchor="middle">Individual · $99/năm · 2FA</text>
+      </g>
+
+      <g class="node" data-section="s2">
+        <rect class="rx" x="230" y="154" width="260" height="58"/>
+        <text x="360" y="174" text-anchor="middle"><tspan class="num">2</tspan>  Agreements, Tax & Banking</text>
+        <text class="sub" x="360" y="198" text-anchor="middle">W-8BEN · SWIFT · Paid Apps Agreement</text>
+      </g>
+
+      <g class="node" data-section="s3">
+        <rect class="rx" x="230" y="234" width="260" height="58"/>
+        <text x="360" y="254" text-anchor="middle"><tspan class="num">3</tspan>  Tạo App Record</text>
+        <text class="sub" x="360" y="278" text-anchor="middle">Bundle ID · Metadata · Screenshots</text>
+      </g>
+
+      <g class="node" data-section="s4">
+        <rect class="rx" x="230" y="314" width="260" height="58"/>
+        <text x="360" y="334" text-anchor="middle"><tspan class="num">4</tspan>  In-App Purchases & Subscriptions</text>
+        <text class="sub" x="360" y="358" text-anchor="middle">Product IDs · Pricing · Groups</text>
+      </g>
+
+      <g class="node" data-section="s5">
+        <rect class="rx" x="230" y="394" width="260" height="58"/>
+        <text x="360" y="414" text-anchor="middle"><tspan class="num">5</tspan>  App Privacy & Nutrition Labels</text>
+        <text class="sub" x="360" y="438" text-anchor="middle">Data Collection · Privacy URL</text>
+      </g>
+
+      <g class="node" data-section="s6">
+        <rect class="rx" x="230" y="474" width="260" height="58"/>
+        <text x="360" y="494" text-anchor="middle"><tspan class="num">6</tspan>  Build & Code Signing</text>
+        <text class="sub" x="360" y="518" text-anchor="middle">Xcode Archive · Transporter · Fastlane</text>
+      </g>
+
+      <g class="node" data-section="s7">
+        <rect class="rx" x="230" y="554" width="260" height="58"/>
+        <text x="360" y="574" text-anchor="middle"><tspan class="num">7</tspan>  TestFlight</text>
+        <text class="sub" x="360" y="598" text-anchor="middle">Internal/External · Beta Review</text>
+      </g>
+
+      <g class="node" data-section="s8">
+        <rect class="rx" x="230" y="634" width="260" height="58"/>
+        <text x="360" y="654" text-anchor="middle"><tspan class="num">8</tspan>  Submit for App Review</text>
+        <text class="sub" x="360" y="678" text-anchor="middle">Review Notes · Export Compliance</text>
+      </g>
+
+      <g class="node" data-section="s9">
+        <rect class="rx" x="230" y="714" width="260" height="58"/>
+        <text x="360" y="734" text-anchor="middle"><tspan class="num">9</tspan>  Phát hành & Release</text>
+        <text class="sub" x="360" y="758" text-anchor="middle">Phased / Manual / Scheduled</text>
+      </g>
+
+      <g class="node ok term">
+        <rect x="245" y="794" width="230" height="48"/>
+        <text x="360" y="814" text-anchor="middle">App live trên App Store</text>
+        <text class="sub" x="360" y="830" text-anchor="middle">Theo dõi Analytics + Doanh thu</text>
+      </g>
+
+      <path class="edge" d="M360,52 L360,74"/>
+      <path class="edge" d="M360,132 L360,154"/>
+      <path class="edge" d="M360,212 L360,234"/>
+      <path class="edge" d="M360,292 L360,314"/>
+      <path class="edge" d="M360,372 L360,394"/>
+      <path class="edge" d="M360,452 L360,474"/>
+      <path class="edge" d="M360,532 L360,554"/>
+      <path class="edge" d="M360,612 L360,634"/>
+      <path class="edge" d="M360,692 L360,714"/>
+      <path class="edge" d="M360,772 L360,794"/>
+    </svg>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="kicker">Bước 1</div>
+  <h2>Đăng ký Apple Developer Program</h2>
+  
+  <p><b>Mở đầu:</b> Bạn cần một Apple Developer account để có thể đưa app lên App Store. Năm 2026, quy trình đã đơn giản hơn nhiều so với trước.</p>
+
+  <table>
+    <tr><th>Hạng mục</th><th>Chi tiết</th></tr>
+    <tr class="hl"><td>Phí</td><td><b>$99/năm</b> — gia hạn tự động</td></tr>
+    <tr><td>Loại tài khoản</td><td><b>Individual</b> — không cần mã DUNS</td></tr>
+    <tr class="hl"><td>Thanh toán</td><td>Visa/Mastercard quốc tế <b>hoặc</b> thanh toán qua Apple ID balance</td></tr>
+    <tr><td>Yêu cầu 2FA</td><td><b>Bắt buộc</b> bật xác thực hai yếu tố cho Apple ID</td></tr>
+    <tr class="hl"><td>Xác minh danh tính</td><td>Online — dùng CCCD/CMND/hộ chiếu</td></tr>
+  </table>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Tạo Apple ID</h3>
+      <p>Truy cập <b>appleid.apple.com</b> → tạo tài khoản mới với email cá nhân. Bật <b>2FA</b> ngay sau khi tạo.</p>
+    </div>
+    <div class="step-card">
+      <h3>Truy cập Apple Developer</h3>
+      <p>Vào <b>developer.apple.com/programs</b> → đăng nhập bằng Apple ID vừa tạo → bấm <b>Enroll</b>.</p>
+    </div>
+    <div class="step-card">
+      <h3>Chọn Individual & thanh toán</h3>
+      <p>Chọn <b>Individual</b> (không phải Organization/Enterprise) → nhập thông tin cá nhân → thanh toán $99.</p>
+    </div>
+    <div class="step-card">
+      <h3>Xác nhận & active</h3>
+      <p>Kiểm tra email kích hoạt. Tài khoản sẽ active trong vòng vài phút đến vài giờ. Bạn có thể kiểm tra tại <b>developer.apple.com/account</b>.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Small Business Program — enroll ngay!</b>
+    <p>Vào <a href="https://developer.apple.com/app-store/small-business-program/" target="_blank">developer.apple.com/app-store/small-business-program</a> để enroll SBP. Hoa hồng giảm từ 30% xuống 15% nếu tổng proceeds &lt; $1M/năm. <b>Không enroll → bạn mất 30% doanh thu ngay từ đầu.</b></p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="kicker">Bước 2</div>
+  <h2>Agreements, Tax & Banking</h2>
+
+  <div class="note bad">
+    <b>⚠️ Quan trọng nhất:</b> Đây là bước bạn phải làm trước khi có thể nhận tiền từ Apple. Nếu bỏ qua, bạn có thể bị khấu trừ 30% tổng doanh thu hoặc không nhận được tiền về tài khoản.
+  </div>
+
+  <h3 style="margin-top:18px;">2.1 Chấp nhận Paid Applications Agreement</h3>
+  <p>Đăng nhập <b>appstoreconnect.apple.com → Agreements, Tax, and Banking</b> → đọc và chấp nhận <b>Paid Applications Agreement</b> phiên bản mới nhất.</p>
+
+  <h3 style="margin-top:16px;">2.2 Khai thuế Mỹ — Mẫu W-8BEN</h3>
+  <table>
+    <tr><th>Trường</th><th>Giá trị cho dev VN</th></tr>
+    <tr><td>Tax Residency</td><td><b>Vietnam</b></td></tr>
+    <tr class="hl"><td>Permanent Residence</td><td><b>Vietnam</b> (địa chỉ thường trú tại VN)</td></tr>
+    <tr><td>Treaty Benefits</td><td><b>No</b> (VN không có hiệp định thuế với Mỹ)</td></tr>
+    <tr class="hl"><td>Foreign TIN</td><td><b>MST cá nhân VN</b> (10 số)</td></tr>
+    <tr><td>US Citizen/Permanent Resident</td><td><b>No</b></td></tr>
+    <tr class="hl"><td>Certification</td><td>Khai đúng sự thật, chịu trách nhiệm trước pháp luật</td></tr>
+  </table>
+
+  <div class="note">
+    <b>Foreign TIN là gì?</b> Là mã số thuế nước ngoài của bạn — chính là <b>MST cá nhân Việt Nam</b>. Nếu bạn chưa có MST, đăng ký tại cơ quan thuế trước. MST là dãy 10 hoặc 13 số. Apple không chấp nhận số CMND/CCCD thay thế.
+  </div>
+
+  <h3 style="margin-top:16px;">2.3 Thêm tài khoản ngân hàng</h3>
+  <table>
+    <tr><th>Trường</th><th>Hướng dẫn</th><th>Ví dụ</th></tr>
+    <tr><td>Bank Name</td><td>Tên ngân hàng (tiếng Anh)</td><td>Vietcombank</td></tr>
+    <tr><td>SWIFT/BIC</td><td>Mã SWIFT — <b>kiểm tra kỹ</b></td><td>BFTVVNVX</td></tr>
+    <tr><td>Account Holder</td><td>Tên chủ tài khoản (viết HOA, khớp Apple ID)</td><td>NGUYEN VAN A</td></tr>
+    <tr><td>Account Number</td><td>Số tài khoản</td><td>1234567890</td></tr>
+    <tr><td>Currency</td><td>Nhận USD hay VND — khuyên USD</td><td>USD</td></tr>
+    <tr><td>Bank Address</td><td>Địa chỉ chi nhánh</td><td>198 Tran Quang Khai, Hanoi</td></tr>
+  </table>
+
+  <div class="note ok">
+    <b>Mẹo:</b> Nhận bằng USD, sau đó tự bán cho ngân hàng hoặc công ty vàng bạc khi tỷ giá cao, thay vì để Apple quy đổi sang VND (tỷ giá của Apple thường không tốt).
+  </div>
+
+  <h3 style="margin-top:16px;">2.4 Thuế khấu trừ (Withholding Tax)</h3>
+  <div class="canvas">
+    <svg class="flow" viewBox="0 0 620 200">
+      <rect x="40" y="20" width="280" height="50" rx="6" fill="var(--ok-soft)" stroke="var(--olive)" stroke-width="1.5"/>
+      <text x="180" y="50" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="monospace">Đã khai W-8BEN + Foreign TIN</text>
+
+      <rect x="360" y="20" width="220" height="50" rx="6" fill="var(--bad-soft)" stroke="var(--rust)" stroke-width="1.5"/>
+      <text x="470" y="50" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="monospace">Chưa khai W-8BEN</text>
+
+      <rect x="40" y="100" width="280" height="50" rx="6" fill="var(--ok-soft)" stroke="var(--olive)" stroke-width="1.5"/>
+      <text x="180" y="124" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="monospace">Khấu trừ 0% (có treaty) /</text>
+      <text x="180" y="140" text-anchor="middle" font-size="11" fill="var(--mut)" font-family="monospace">~10-30% (không treaty, VN)</text>
+
+      <rect x="360" y="100" width="220" height="50" rx="6" fill="var(--bad-soft)" stroke="var(--rust)" stroke-width="1.5"/>
+      <text x="470" y="124" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="monospace">Khấu trừ 30% tổng doanh thu</text>
+      <text x="470" y="140" text-anchor="middle" font-size="11" fill="var(--mut)" font-family="monospace">Không được hoàn lại</text>
+
+      <path class="edge" d="M180,70 L180,100"/>
+      <path class="edge" d="M470,70 L470,100"/>
+      <path class="lbl" d="M340,45 L360,45" stroke="var(--mut)" stroke-width="1.5" fill="none"/>
+      <text x="350" y="40" text-anchor="middle" font-size="11" fill="var(--rust)" font-family="monospace">vs</text>
+    </svg>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="kicker">Bước 3</div>
+  <h2>Tạo App Record & Cấu hình thông tin cơ bản</h2>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Tạo App Record mới</h3>
+      <p><b>My Apps → + → New App.</b> Điền Platform (iOS), Name (≤ 30 ký tự), Primary Language, Bundle ID (phải đăng ký trước), SKU.</p>
+    </div>
+    <div class="step-card">
+      <h3>Điền App Information</h3>
+      <p>Tab <b>App Information:</b></p>
+      <ul>
+        <li><b>Category:</b> Chọn category chính xác (VD: Business, Education, Productivity)</li>
+        <li><b>Privacy Policy URL:</b> Bắt buộc nếu app thu thập data — phải là URL thật</li>
+        <li><b>Rating:</b> Tự đánh giá — khai đúng, Apple có thể kiểm tra lại</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Cấu hình Version Metadata</h3>
+      <p>Tab version hiện tại (VD: 1.0):</p>
+      <ul>
+        <li><b>Description</b> (≤ 4000 ký tự) — mô tả rõ ràng</li>
+        <li><b>Keywords</b> (≤ 100 ký tự) — cách nhau bằng dấu phẩy</li>
+        <li><b>Support URL</b> — bắt buộc, có page thật</li>
+        <li><b>Marketing URL</b> — optional, trang chủ app</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Upload Screenshots</h3>
+      <p>Yêu cầu 2026:</p>
+      <ul>
+        <li>Mỗi device: tối thiểu 1 ảnh, khuyến nghị 3–5</li>
+        <li>Định dạng: JPEG/PNG, 72 DPI, RGB</li>
+        <li>Nội dung khớp với app thực tế</li>
+        <li>App Preview (video): ≤ 30 giây, .mov/.m4v</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="kicker">Bước 4</div>
+  <h2>Cấu hình In-App Purchases & Subscriptions</h2>
+
+  <p>Truy cập <b>My Apps → chọn app → In-App Purchases.</b></p>
+
+  <table>
+    <tr><th>Loại</th><th>Dùng cho</th><th>Ví dụ</th></tr>
+    <tr><td><b>Consumable</b></td><td>Mua một lần, dùng mất</td><td>10 coins, 100 gems</td></tr>
+    <tr><td><b>Non-Consumable</b></td><td>Mua một lần, giữ mãi</td><td>Unlock premium, remove ads</td></tr>
+    <tr class="hl"><td><b>Auto-Renewable Subscription</b></td><td>Tự động gia hạn</td><td>Premium monthly/yearly</td></tr>
+    <tr><td><b>Non-Renewing Subscription</b></td><td>Gia hạn thủ công</td><td>VIP 1 tháng (không auto-renew)</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">4.1 Cấu hình Subscription Groups</h3>
+  <p>Nếu có nhiều subscription, nhóm chúng vào Subscription Group:</p>
+  <ul>
+    <li><b>Mỗi group:</b> user chỉ có 1 subscription active tại một thời điểm</li>
+    <li><b>Upgrade/Downgrade:</b> tự động xử lý — không tính phí hai lần</li>
+    <li><b>Example:</b> Group "Premium" gồm monthly ($9.99) + yearly ($79.99)</li>
+  </ul>
+
+  <h3 style="margin-top:16px;">4.2 Introductory Offers</h3>
+  <div class="grid-2">
+    <div class="note ok" style="margin:0;">
+      <b>Free Trial</b><br>
+      Miễn phí X ngày (3/7/14/30) trước khi tính phí.<br>
+      VD: 7 ngày free → $9.99/tháng
+    </div>
+    <div class="note info" style="margin:0;border-left-color:#3B82F6;">
+      <b>Pay-up-front / Pay-as-you-go</b><br>
+      Giảm giá cho kỳ đầu tiên.<br>
+      VD: $1.99/tháng (3 tháng đầu) → $9.99/tháng
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">4.3 Localization cho IAP</h3>
+  <p>Mỗi product cần <b>Display Name</b> và <b>Description</b> — có thể localize cho từng ngôn ngữ. VD:</p>
+  <ul>
+    <li>Tiếng Việt: "Premium Tháng" / "Truy cập tất cả tính năng cao cấp"</li>
+    <li>Tiếng Anh: "Premium Monthly" / "Access all premium features"</li>
+  </ul>
+</section>
+
+<section id="s5">
+  <div class="kicker">Bước 5</div>
+  <h2>App Privacy & Nutrition Labels</h2>
+
+  <p><b>Bắt buộc từ năm 2022+,</b> nhưng năm 2026 Apple đã mở rộng thêm các danh mục dữ liệu mới.</p>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Vào App Privacy</h3>
+      <p><b>My Apps → chọn app → App Privacy → Get Started / Edit.</b></p>
+    </div>
+    <div class="step-card">
+      <h3>Khai báo Data Collection</h3>
+      <p>Chọn <b>tất cả loại dữ liệu</b> app thu thập:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+        <span class="tag">Contact Info</span>
+        <span class="tag">Health & Fitness</span>
+        <span class="tag">Financial</span>
+        <span class="tag">Location</span>
+        <span class="tag">User Content</span>
+        <span class="tag">Identifiers</span>
+        <span class="tag">Usage Data</span>
+        <span class="tag">Diagnostics</span>
+        <span class="tag">Search History</span>
+        <span class="tag">Browsing History</span>
+        <span class="tag">Contacts</span>
+        <span class="tag">Sensitive Info</span>
+        <span class="tag">Purchases</span>
+      </div>
+    </div>
+    <div class="step-card">
+      <h3>Khai báo Purpose</h3>
+      <p>Với mỗi loại dữ liệu, chọn mục đích:</p>
+      <ul>
+        <li><b>App Functionality</b> — chức năng chính</li>
+        <li><b>Analytics</b> — phân tích</li>
+        <li><b>Product Personalization</b> — cá nhân hoá</li>
+        <li><b>Third-Party Advertising</b> — quảng cáo bên thứ ba</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Linked to You?</h3>
+      <p><b>Linked to You:</b> Dữ liệu gắn với danh tính người dùng → khai "Yes"<br>
+      <b>Not Linked to You:</b> Dữ liệu ẩn danh → khai "No"</p>
+    </div>
+    <div class="step-card">
+      <h3>Tracking</h3>
+      <p>Nếu app có tracking (VD: dùng IDFA, third-party SDK track user), bắt buộc:</p>
+      <ul>
+        <li>Khai <b>"Yes"</b> trong mục Tracking</li>
+        <li>Dùng <b>App Tracking Transparency (ATT)</b> framework</li>
+        <li>Hiển thị ATT prompt khi user mở app</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="kicker">Bước 6</div>
+  <h2>Build & Code Signing</h2>
+
+  <h3>6.1 Tự động quản lý signing (khuyên dùng)</h3>
+  <div class="note ok">
+    <b>Xcode → Automatically manage signing.</b> Bật lên, Xcode tự tạo certificate, provisioning profile. Phù hợp 99% trường hợp.
+  </div>
+
+  <h3 style="margin-top:16px;">6.2 Upload build lên App Store Connect</h3>
+  <table>
+    <tr><th>Phương pháp</th><th>Cách làm</th><th>Khi nào dùng</th></tr>
+    <tr><td><b>Xcode Organizer</b></td><td>Product → Archive → Distribute App → App Store Connect</td><td>Dev cá nhân, đơn giản nhất</td></tr>
+    <tr><td><b>Transporter</b></td><td>App macOS → kéo thả .ipa → Deliver</td><td>CI/CD hoặc không có Xcode</td></tr>
+    <tr><td><b>Command Line (altool)</b></td><td><code>xcrun altool --upload-app ...</code></td><td>Automation, script</td></tr>
+    <tr class="hl"><td><b>Fastlane</b></td><td><code>fastlane release</code></td><td>CI/CD, production pipeline</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">6.3 Build Processing Trạng thái</h3>
+  <div class="canvas">
+    <svg class="flow" viewBox="0 0 620 100">
+      <rect x="30" y="25" width="130" height="50" rx="6" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+      <text x="95" y="55" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="monospace">Uploaded</text>
+
+      <path class="edge" d="M160,50 L190,50"/>
+
+      <rect x="190" y="25" width="130" height="50" rx="6" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+      <text x="255" y="55" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="monospace">Processing</text>
+
+      <path class="edge" d="M320,50 L350,50"/>
+
+      <rect x="350" y="25" width="130" height="50" rx="6" fill="var(--ok-soft)" stroke="var(--olive)" stroke-width="1.5"/>
+      <text x="415" y="55" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="monospace">Valid ✓</text>
+
+      <path class="edge" d="M480,50 L510,50"/>
+
+      <rect x="510" y="25" width="100" height="50" rx="6" fill="var(--ok-soft)" stroke="var(--olive)" stroke-width="1.5"/>
+      <text x="560" y="55" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="monospace">Ready ✓</text>
+    </svg>
+  </div>
+
+  <h3 style="margin-top:16px;">6.4 Fastlane — Ví dụ config</h3>
+  <pre>lane :release do
+  match(type: "appstore")                          # certificates & profiles
+  gym(scheme: "BusinessLaw", configuration: "Release")  # build .ipa
+  pilot(skip_waiting_for_build_processing: false)   # upload + TestFlight
+end</pre>
+</section>
+
+<section id="s7">
+  <div class="kicker">Bước 7</div>
+  <h2>TestFlight — Beta Testing</h2>
+
+  <table>
+    <tr><th>Tính năng</th><th>Internal Testing</th><th>External Testing</th></tr>
+    <tr><td>Số tester tối đa</td><td>100 người</td><td>10.000 người</td></tr>
+    <tr><td>Yêu cầu</td><td>Apple ID + thêm vào team</td><td>Chỉ cần email</td></tr>
+    <tr><td>Beta App Review</td><td>Không cần</td><td><b>Bắt buộc</b> lần đầu</td></tr>
+    <tr><td>Public Link</td><td>Không</td><td><b>Có</b> (2026)</td></tr>
+    <tr><td>Build hết hạn</td><td>90 ngày</td><td>90 ngày</td></tr>
+  </table>
+
+  <div class="steps">
+    <div class="step-card">
+      <h3>Thêm Internal Testers</h3>
+      <p><b>TestFlight → App Store Connect Users</b> → thêm user (email) → assign role Developer/Admin → chọn build → Send Invite.</p>
+    </div>
+    <div class="step-card">
+      <h3>External Testing — Beta Review</h3>
+      <p>Lần đầu external test:</p>
+      <ul>
+        <li>Điền <b>Beta Review Notes</b> — mô tả app, cung cấp demo account nếu cần</li>
+        <li>Apple review 24–48h</li>
+        <li>Sau khi approved, có thể mời tester</li>
+      </ul>
+    </div>
+    <div class="step-card">
+      <h3>Public Link (2026)</h3>
+      <p><b>TestFlight → Public Link</b> → bật lên → copy link. Bất kỳ ai có link đều có thể join beta (tối đa 10.000 người). Rất hữu ích cho MVP testing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="s8">
+  <div class="kicker">Bước 8</div>
+  <h2>Submit for App Review</h2>
+
+  <h3>8.1 Export Compliance</h3>
+  <p>Câu hỏi đầu tiên khi submit — trả lời đúng để tránh bị từ chối:</p>
+  <table>
+    <tr><th>App có</th><th>Trả lời</th></tr>
+    <tr class="hl"><td>Chỉ dùng HTTPS/TLS (Alamofire, URLSession)</td><td><b>No — Exempt</b></td></tr>
+    <tr><td>Dùng thư viện mã hoá (CryptoKit, CommonCrypto)</td><td><b>Yes → cần giấy phép</b></td></tr>
+    <tr><td>Custom encryption tự viết</td><td><b>Yes → ERN/CCATS</b></td></tr>
+    <tr><td>Không có encryption nào</td><td><b>No</b></td></tr>
+  </table>
+
+  <div class="note">
+    <b>HTTPS Exempt:</b> Nếu app chỉ dùng HTTPS, chọn "No" → "Yes, my app uses encryption but is exempt" → chọn option "App is exempt from declaration" → điền số xác nhận (có sẵn hoặc tự sinh).
+  </div>
+
+  <h3 style="margin-top:16px;">8.2 App Review Notes — Viết sao cho chuẩn</h3>
+  <p>Mẫu Review Notes cho app cần login:</p>
+  <pre>Demo account:
+  Email: demo@businesslaw.vn
+  Password: Demo123!
+
+Notes for reviewer:
+- Business Law VN is a legal reference app for Vietnamese business law
+- User can browse laws, decrees, and contracts
+- Account required to save favorites and history
+- All content is in Vietnamese
+- No user-generated content, no social features
+- IAP: Premium subscription unlocks offline access + advanced search</pre>
+
+  <h3 style="margin-top:16px;">8.3 Các trạng thái Review</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+    <span class="badge">Ready for Review</span>
+    <span class="badge blue">Waiting for Review</span>
+    <span class="badge blue">In Review</span>
+    <span class="badge green">Pending Developer Release</span>
+    <span class="badge green">Ready for Sale</span>
+    <span class="badge red">Rejected</span>
+    <span class="badge">Metadata Rejected</span>
+  </div>
+
+  <h3 style="margin-top:16px;">8.4 Top Reasons for Rejection (2026)</h3>
+  <table>
+    <tr><th>#</th><th>Guideline</th><th>%</th><th>Nguyên nhân</th></tr>
+    <tr class="hl"><td>1</td><td><b>2.1 App Completeness</b></td><td>~42%</td><td>Crash, placeholder, thiếu demo account, metadata</td></tr>
+    <tr><td>2</td><td><b>3.x Business</b></td><td>~18%</td><td>IAP sai business model</td></tr>
+    <tr><td>3</td><td><b>4.0 Design</b></td><td>~15%</td><td>Copycat, quá ít chức năng</td></tr>
+    <tr><td>4</td><td><b>2.3 Metadata</b></td><td>~12%</td><td>Screenshot mô tả sai</td></tr>
+    <tr><td>5</td><td><b>5.1 Privacy</b></td><td>~10%</td><td>Thiếu privacy policy</td></tr>
+  </table>
+</section>
+
+<section id="s9">
+  <div class="kicker">Bước 9</div>
+  <h2>Phát hành & Release Management</h2>
+
+  <table>
+    <tr><th>Chế độ</th><th>Mô tả</th><th>Khi nào dùng</th></tr>
+    <tr><td><b>Manual Release</b></td><td>Bạn bấm "Release" sau khi approved</td><td>Muốn kiểm soát thời điểm</td></tr>
+    <tr><td><b>Automatic Release</b></td><td>App tự động lên store ngay khi approved</td><td>Update thường, hotfix</td></tr>
+    <tr class="hl"><td><b>Phased Release</b></td><td>Tăng dần % user (1% → 2% → 5% → ... → 100%)</td><td>Bản lớn, muốn quan sát crash trước</td></tr>
+    <tr><td><b>Scheduled Release</b></td><td>Hẹn ngày giờ cụ thể</td><td>Marketing campaign, event</td></tr>
+    <tr><td><b>Pre-Order</b></td><td>Cho user đặt trước → tải tự động khi release</td><td>App mới, build hype</td></tr>
+  </table>
+
+  <div class="callout">
+    <b>Phased Release — recommended cho bản lớn</b>
+    <p>Phát hành 1% → theo dõi crash rate & feedback trong 24h → tăng lên 2% → 5% → ... → 100%. Có thể dừng release bất kỳ lúc nào nếu phát hiện lỗi nghiêm trọng. Giảm thiểu rủi ro cho user.</p>
+  </div>
+</section>
+
+<section id="s10">
+  <div class="kicker">Bước 10</div>
+  <h2>Pricing & Availability</h2>
+
+  <h3>10.1 Cấu hình giá</h3>
+  <p><b>My Apps → chọn app → Pricing and Availability.</b></p>
+
+  <table>
+    <tr><th>Tuỳ chọn</th><th>Mô tả</th></tr>
+    <tr><td>Standard Price</td><td>Chọn price tier — Apple tự cập nhật giá theo tỷ giá</td></tr>
+    <tr><td>Custom Price</td><td>Tự set giá cố định (2026: hỗ trợ nhiều hơn)</td></tr>
+    <tr><td>Availability</td><td>Tất cả territories hoặc chọn lọc</td></tr>
+    <tr><td>Start Date</td><td>Hẹn ngày bắt đầu bán</td></tr>
+    <tr><td>End Date</td><td>Hẹn ngày kết thúc (VD: sale có thời hạn)</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">10.2 Price Tiers phổ biến (2026)</h3>
+  <table>
+    <tr><th>Tier</th><th>Giá VND</th><th>Giá USD</th></tr>
+    <tr><td>0</td><td>Miễn phí</td><td>Free</td></tr>
+    <tr><td>1</td><td>29.000₫</td><td>$0.99</td></tr>
+    <tr><td>3</td><td>59.000₫</td><td>$2.99</td></tr>
+    <tr><td>5</td><td>99.000₫</td><td>$3.99</td></tr>
+    <tr><td>7</td><td>199.000₫</td><td>$6.99</td></tr>
+    <tr><td>10</td><td>499.000₫</td><td>$14.99</td></tr>
+    <tr><td>15</td><td>1.199.000₫</td><td>$39.99</td></tr>
+    <tr><td>20</td><td>2.499.000₫</td><td>$79.99</td></tr>
+  </table>
+
+  <h3 style="margin-top:16px;">10.3 Chọn Territories</h3>
+  <div class="note">
+    <b>Mặc định:</b> bán ở tất cả territories. Nếu app chỉ hỗ trợ tiếng Việt, bạn có thể giới hạn ở <b>Specific Territories → Vietnam</b>. Tuy nhiên, nên để tất cả để user VN ở nước ngoài vẫn tải được.
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="kicker">Trước khi submit</div>
+  <h2>Checklist cuối cùng</h2>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ Technical</h3>
+      <ul style="font-size:13px;">
+        <li>App không crash trên device thật</li>
+        <li>All links hoạt động</li>
+        <li>IAP test pass trên sandbox</li>
+        <li>Push notification OK (nếu có)</li>
+        <li>Apple Sign-In OK (nếu có)</li>
+        <li>ATT prompt hiển thị (nếu có tracking)</li>
+        <li>Export compliance khai đúng</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ Metadata</h3>
+      <ul style="font-size:13px;">
+        <li>App name ≤ 30 ký tự</li>
+        <li>Description ≤ 4000 ký tự</li>
+        <li>Keywords ≤ 100 ký tự</li>
+        <li>Screenshots đúng kích thước</li>
+        <li>Privacy Policy URL hoạt động</li>
+        <li>Rating đã khai</li>
+        <li>Category chính xác</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ App Review</h3>
+      <ul style="font-size:13px;">
+        <li>Demo account hoạt động</li>
+        <li>Review notes chi tiết</li>
+        <li>Contact info chính xác</li>
+        <li>Không có placeholder content</li>
+        <li>Không vi phạm guideline 2.1/2.3/3.x/4.x/5.1</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:15px;margin-bottom:8px;">✓ Business</h3>
+      <ul style="font-size:13px;">
+        <li>Agreements, Tax, Banking — active</li>
+        <li>W-8BEN còn hiệu lực (3 năm)</li>
+        <li>Bank account hợp lệ</li>
+        <li>Small Business Program enrolled</li>
+        <li>IAP pricing chính xác</li>
+        <li>Subscription offers configured</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h2 style="font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:10px;">Nguồn tham khảo</h2>
+  <ul>
+    <li><a href="https://developer.apple.com/programs/">Apple Developer Program</a></li>
+    <li><a href="https://appstoreconnect.apple.com">App Store Connect</a></li>
+    <li><a href="https://developer.apple.com/app-store/review/guidelines/">App Review Guidelines</a></li>
+    <li><a href="https://developer.apple.com/app-store/small-business-program/">Small Business Program</a></li>
+    <li><a href="https://developer.apple.com/testflight/">TestFlight</a></li>
+    <li><a href="https://developer.apple.com/documentation/appstoreconnectapi">App Store Connect API</a></li>
+    <li><a href="https://fastlane.tools">Fastlane</a></li>
+    <li><a href="https://www.irs.gov/forms-pubs/about-form-w-8-ben">IRS W-8BEN</a></li>
+  </ul>
+  <p style="margin-top:12px">⚠️ Mốc dữ liệu 10/2026. Các tỷ lệ, phí, và quy định có thể thay đổi — kiểm tra trên App Store Connect và hợp đồng hiện hành.</p>
+</footer>
+
+</div>
+
+<button id="theme" type="button" aria-label="Dark mode toggle" title="Dark/Light">☾</button>
+
+<script>
+  var btn = document.getElementById("theme");
+  function sync() { btn.textContent = document.documentElement.classList.contains("dark") ? "☀" : "☾"; }
+  btn.addEventListener("click", function () {
+    var want = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", want);
+    try { localStorage.setItem("theme", want ? "dark" : "light"); } catch (e) {}
+    sync();
+  });
+  sync();
+
+  var nodes = document.querySelectorAll(".node[data-section]");
+  nodes.forEach(function (n) {
+    n.addEventListener("click", function () {
+      var sectionId = n.dataset.section;
+      var el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+</script>
+</body>
+</html>
