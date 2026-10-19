@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thuế Việt Nam & thủ tục cho solo developer · VN</title>
+<script>
+  (function () {
+    var q = location.search.indexOf("theme=dark") !== -1;
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches))) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
+<style>
+  :root {
+    --bg: #FAF9F5;
+    --ink: #141413;
+    --card: #FFFFFF;
+    --line: #D1CFC5;
+    --line-soft: #E7E4DA;
+    --mut: #87867F;
+    --mut2: #3D3D3A;
+    --clay: #D97757;
+    --olive: #6B7F51;
+    --rust: #B04A3F;
+    --oat: #F0EEE6;
+    --ok-soft: rgba(107,127,81,.12);
+    --bad-soft: rgba(176,74,63,.10);
+    --clay-soft: rgba(217,119,87,.14);
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html.dark {
+    --bg: #121110;
+    --ink: #EDEAE3;
+    --card: #1B1A17;
+    --line: #3A3831;
+    --line-soft: #2B2924;
+    --mut: #9A988F;
+    --mut2: #C9C7BD;
+    --oat: #1E1D1A;
+    --clay: #E08A6B;
+    --olive: #8FA269;
+    --rust: #CF6A5C;
+    --ok-soft: rgba(143,162,105,.14);
+    --bad-soft: rgba(207,106,92,.14);
+    --clay-soft: rgba(224,138,107,.16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); -webkit-font-smoothing: antialiased;
+    padding: 48px 22px 96px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .sheet { max-width: 980px; margin: 0 auto; }
+  header { margin-bottom: 32px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--mut); margin-bottom: 12px; }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 33px; letter-spacing: -.01em; line-height: 1.15; margin-bottom: 12px; }
+  h1 code, p code, li code, td code { font-family: var(--mono); font-size: .86em; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; }
+  .lead { font-size: 14.5px; line-height: 1.62; color: var(--mut2); max-width: 680px; }
+
+  .note { margin: 18px 0; padding: 12px 16px; border: 1.5px solid var(--line); border-left: 4px solid var(--clay); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.6; color: var(--mut2); }
+  .note b { color: var(--ink); }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 30px; }
+  .toc a { font-family: var(--mono); font-size: 12px; color: var(--mut2); text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 12px; background: var(--card); }
+  .toc a:hover { border-color: var(--clay); color: var(--ink); }
+
+  .canvas { border: 1.5px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; overflow-x: auto; }
+  svg.flow { display: block; width: 100%; height: auto; }
+  .flow text { font-family: var(--mono); font-size: 12px; fill: var(--ink); pointer-events: none; }
+  .flow .sub { font-size: 9.5px; fill: var(--mut); }
+  .flow .lbl { font-size: 10px; fill: var(--mut); }
+  .node rect, .node path { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+  .node.rx rect { rx: 8; }
+  .node.term rect { fill: var(--oat); rx: 22; }
+  .node.ok rect { fill: var(--ok-soft); stroke: var(--olive); }
+  .node.bad rect { fill: var(--bad-soft); stroke: var(--rust); }
+  .node.warn rect { fill: var(--clay-soft); stroke: var(--clay); }
+  .edge { stroke: var(--mut); stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  .edge.yes { stroke: var(--olive); marker-end: url(#arrow-olive); }
+  .edge.no { stroke: var(--rust); stroke-dasharray: 4 4; marker-end: url(#arrow-rust); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--mut2); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .chip { width: 20px; height: 13px; border: 1.5px solid var(--line); border-radius: 4px; background: var(--card); }
+  .chip.gate { width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; }
+  .chip.ok { background: var(--ok-soft); border-color: var(--olive); }
+  .chip.bad { background: var(--bad-soft); border-color: var(--rust); }
+  .chip.warn { background: var(--clay-soft); border-color: var(--clay); }
+
+  section { margin-top: 46px; }
+  section h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; letter-spacing: -.01em; margin-bottom: 6px; }
+  .kicker { font-family: var(--mono); font-size: 11px; color: var(--clay); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  section p, section li { font-size: 14.5px; line-height: 1.66; color: var(--mut2); }
+  section p { margin-top: 12px; }
+  ul { margin: 12px 0 0 20px; }
+  li { margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th { font-family: var(--serif); font-weight: 500; color: var(--ink); font-size: 14px; border-bottom: 1.5px solid var(--line); }
+  td { color: var(--mut2); line-height: 1.5; }
+  tr.hl td { background: var(--ok-soft); }
+  tr.hl-bad td { background: var(--bad-soft); }
+  tr.hl-warn td { background: var(--clay-soft); }
+
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+  .q { border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); padding: 14px 16px; }
+  .q h4 { font-family: var(--serif); font-weight: 500; font-size: 17px; margin-bottom: 2px; }
+  .q .mon { font-family: var(--mono); font-size: 11px; color: var(--clay); margin-bottom: 10px; }
+  .q ul { margin: 0; }
+  .q li { font-size: 12.5px; line-height: 1.5; margin-top: 8px; }
+  .q li b { color: var(--ink); }
+  @media (max-width: 760px) { .timeline { grid-template-columns: 1fr 1fr; } }
+
+  .callout { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: var(--clay-soft); border: 1.5px solid var(--clay); }
+  .callout b { font-family: var(--serif); font-size: 16px; }
+  .callout p { color: var(--ink); margin-top: 6px; }
+
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1.5px solid var(--line); }
+  footer p, footer li { font-size: 13px; line-height: 1.6; color: var(--mut); }
+  footer a { color: var(--clay); text-decoration: none; }
+
+  #theme { position: fixed; top: 16px; right: 18px; z-index: 50; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; width: 36px; height: 36px; cursor: pointer; font-size: 16px; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  #theme:hover { border-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">Solo Developer Guide · Việt Nam · mốc 19/10/2026</div>
+    <h1>Thuế &amp; thủ tục: solo dev nhận tiền từ App Store phải làm gì</h1>
+    <p class="lead">
+      Ngưỡng miễn thuế mới <b>1 tỷ đồng/năm</b> (2026) giúp đa số indie dev không phải nộp thuế GTGT/TNCN —
+      nhưng vẫn phải <b>thông báo doanh thu</b>. Tài liệu này tóm tắt nghĩa vụ, tỷ lệ, ngân hàng/ngoại tệ,
+      lịch kê khai và những sai lầm dễ mất tiền nhất.
+    </p>
+    <div class="toc">
+      <a href="#s0">🧭 Sơ đồ quyết định</a>
+      <a href="#s1">Loại thu nhập</a>
+      <a href="#s2">Ngưỡng 1 tỷ</a>
+      <a href="#s3">Tỷ lệ thuế</a>
+      <a href="#s4">Apple có trừ thay?</a>
+      <a href="#s5">Ngân hàng &amp; ngoại tệ</a>
+      <a href="#s6">Cá nhân / hộ / công ty</a>
+      <a href="#s7">Lịch kê khai</a>
+      <a href="#s8">Sai lầm</a>
+      <a href="#src">Nguồn</a>
+    </div>
+    <div class="note">
+      <b>Đọc trước:</b> thông tin tham khảo, <b>không phải</b> tư vấn thuế/pháp lý. Quy định 2025–2026 thay đổi rất
+      nhanh (ngưỡng 1 tỷ, bỏ thuế khoán, bỏ lệ phí môn bài). Kiểm tra lại với <b>Chi cục Thuế nơi cư trú / đại lý thuế</b> trước khi kê khai.
+    </div>
+  </header>
+
+  <section id="s0">
+    <div class="kicker">Dòng chảy nghĩa vụ</div>
+    <h2>Bạn thuộc nhóm nào? — sơ đồ quyết định</h2>
+    <div class="canvas">
+      <svg class="flow" viewBox="0 0 640 580">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/></marker>
+          <marker id="arrow-rust" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--rust)"/></marker>
+          <marker id="arrow-olive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--olive)"/></marker>
+        </defs>
+
+        <g class="node term">
+          <rect x="170" y="12" width="300" height="44"/>
+          <text x="320" y="31" text-anchor="middle">Thu nhập bán app qua App Store / Google Play</text>
+          <text class="sub" x="320" y="47" text-anchor="middle">thu nhập từ kinh doanh · doanh thu tính = gross</text>
+        </g>
+
+        <path class="edge" d="M320,56 L320,116"/>
+        <g class="node gate">
+          <path d="M320,116 L374,158 L320,200 L266,158 Z"/>
+          <text x="320" y="162" text-anchor="middle">Doanh thu &gt; 1 tỷ/năm?</text>
+        </g>
+
+        <path class="edge no" d="M282,180 C200,180 195,200 194,240 L194,240"/>
+        <text class="lbl" x="120" y="232" fill="var(--rust)">không (≤ 1 tỷ)</text>
+        <g class="node ok">
+          <rect class="rx" x="24" y="240" width="170" height="98"/>
+          <text x="109" y="262" text-anchor="middle">MIỄN GTGT + TNCN</text>
+          <text class="sub" x="109" y="278" text-anchor="middle">doanh thu ≤ 1 tỷ/năm</text>
+          <text class="sub" x="109" y="291" text-anchor="middle">(NĐ 141/2026 + NĐ 68/2026)</text>
+          <text class="sub" x="109" y="311" text-anchor="middle">NHƯNG vẫn phải</text>
+          <text class="sub" x="109" y="324" text-anchor="middle">thông báo DT: 31/07 &amp; 31/01</text>
+        </g>
+
+        <path class="edge yes" d="M320,200 L320,252"/>
+        <text class="lbl" x="330" y="232" fill="var(--olive)">có (&gt; 1 tỷ)</text>
+        <g class="node rx">
+          <rect x="204" y="252" width="232" height="64"/>
+          <text x="320" y="274" text-anchor="middle">KÊ KHAI THUẾ THEO QUÝ</text>
+          <text class="sub" x="320" y="290" text-anchor="middle">mẫu 01/CNKD trên eTax · GTGT + TNCN</text>
+          <text class="sub" x="320" y="304" text-anchor="middle">hạn nộp: 30 đầu tháng quý sau</text>
+        </g>
+
+        <path class="edge" d="M320,316 L132,344"/>
+        <path class="edge" d="M320,316 L320,344"/>
+        <path class="edge" d="M320,316 L508,344"/>
+        <g class="node rx">
+          <rect x="52" y="344" width="160" height="50"/>
+          <text x="132" y="364" text-anchor="middle">Bắt buộc hóa đơn điện tử</text>
+          <text class="sub" x="132" y="380" text-anchor="middle">khi doanh thu &gt; 1 tỷ</text>
+        </g>
+        <g class="node rx">
+          <rect x="240" y="344" width="160" height="50"/>
+          <text x="320" y="364" text-anchor="middle">Quyết toán thuế năm</text>
+          <text class="sub" x="320" y="380" text-anchor="middle">hạn chót 30/04 năm sau</text>
+        </g>
+        <g class="node rx">
+          <rect x="428" y="344" width="160" height="50"/>
+          <text x="508" y="364" text-anchor="middle">Lưu chứng từ ≥ 10 năm</text>
+          <text class="sub" x="508" y="380" text-anchor="middle">sao kê + báo cáo Apple</text>
+        </g>
+
+        <g class="node warn term">
+          <rect x="160" y="446" width="320" height="58"/>
+          <text x="320" y="468" text-anchor="middle">Không trông chờ Apple khấu trừ thay thuế VN</text>
+          <text class="sub" x="320" y="486" text-anchor="middle">Apple nộp thuế nhà thầu riêng cho hoa hồng của họ · bạn tự kê khai phần của mình</text>
+        </g>
+        <path class="edge" d="M320,394 L320,446"/>
+      </svg>
+      <div class="legend">
+        <span><i class="chip"></i> nghĩa vụ</span>
+        <span><i class="chip gate"></i> ngưỡng quyết định</span>
+        <span><i class="chip ok"></i> nhẹ (miễn thuế)</span>
+        <span><i class="chip bad"></i> nhánh "có"</span>
+        <span><i class="chip warn"></i> lưu ý vùng xám</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="kicker">Bản chất thu nhập</div>
+    <h2>Bán app = "thu nhập từ kinh doanh", không thể né vì nguồn nước ngoài</h2>
+    <ul>
+      <li>Khoản 1 Điều 3 Luật Thuế TNCN (Luật 109/2025/QH15 hiệu lực 1/7/2026): bán app là <b>thu nhập từ kinh doanh</b> (kinh doanh dịch vụ/phần mềm), không phải loại thu nhập riêng.</li>
+      <li>Thông tư 40/2021/TT-BTC (Điều 2.1đ): bao gồm hoạt động <b>thương mại điện tử, sản phẩm/dịch vụ nội dung thông tin số</b>.</li>
+      <li><b>Doanh thu tính thuế = gross</b> (toàn bộ giá người dùng trả, trước hoa hồng Apple/Google — Công văn 1063/CT-CS).</li>
+      <li>Cơ quan thuế đã và đang <b>rà soát dev nhận tiền từ App Store/Google Play</b>; không đăng ký không loại trừ nghĩa vụ, chỉ thêm tiền phạt (truy thu + chậm nộp 0,03%/ngày).</li>
+    </ul>
+  </section>
+
+  <section id="s2">
+    <div class="kicker">Ngưỡng 2026</div>
+    <h2>Doanh thu ≤ 1 tỷ đồng/năm: miễn GTGT + TNCN</h2>
+    <p>Chuỗi văn bản: Luật GTGT 48/2024 nâng 100→200 triệu (1/1/2026) → Luật 149/2025 → NĐ 68/2026 (500 triệu) → <b>NĐ 141/2026/NĐ-CP: 1 tỷ/năm</b>, hồi tố từ 1/1/2026. Đã <b>bãi bỏ lệ phí môn bài</b> từ 1/1/2026.</p>
+    <table>
+      <tr><th>Doanh thu năm</th><th>GTGT / TNCN</th><th>Nghĩa vụ đi kèm</th></tr>
+      <tr class="hl"><td><b>≤ 1 tỷ đồng</b></td><td><b>Miễn</b> (cửa, tính trên toàn bộ — không phải bậc)</td><td><b>Phải thông báo doanh thu</b>: 31/07 (6 tháng đầu) &amp; 31/01 năm sau. Vượt ngưỡng giữa năm → kê khai từ quý vượt.</td></tr>
+      <tr class="hl-bad"><td><b>&gt; 1 tỷ đồng</b></td><td><b>Phải nộp</b> trên toàn bộ doanh thu</td><td>Kê khai quý (01/CNKD), hóa đơn điện tử, quyết toán năm.</td></tr>
+    </table>
+    <div class="note"><b>Hiểu đúng "cửa":</b> vượt 1 tỷ một đồng cũng tính thuế trên <b>toàn bộ</b> doanh thu, không chỉ phần vượt. Lên kế hoạch ngay khi doanh thu chạm gần ngưỡng.</div>
+  </section>
+
+  <section id="s3">
+    <div class="kicker">Tỷ lệ nộp khi > 1 tỷ</div>
+    <h2>App của bạn tính thuế theo tỷ lệ nào?</h2>
+    <table>
+      <tr><th>Loại hoạt động</th><th>GTGT</th><th>TNCN</th><th>Căn cứ</th></tr>
+      <tr><td><b>Cho thuê / cung cấp phần mềm, app tính phí</b></td><td><b>0–5%</b> (0% nếu đạt chuẩn sản phẩm phần mềm theo Luật CNTT)</td><td><b>2%</b></td><td>TT 40/2021 Phụ lục I; Thuế Hưng Yên (Báo Chính phủ 8/2025)</td></tr>
+      <tr class="hl-warn"><td><b>Nội dung số / game / nhạc, phim, ảnh số, quảng cáo số</b></td><td><b>5%</b></td><td><b>5%</b></td><td>Luật TNCN 109/2025 Điều 7.3</td></tr>
+    </table>
+    <p>Tỷ lệ chung theo ngành (Luật TNCN 109/2025 Điều 7): hàng hóa 0,5% · <b>dịch vụ 2%</b> · sản xuất/vận tải 1,5% · <b>nội dung số 5%</b> · cho thuê tài sản 5% · khác 1%.</p>
+    <div class="note"><b>Vùng xám thực tế:</b> phân loại "app tính phí = dịch vụ phần mềm (2%)" vs "nội dung số (5%)" vs "bản quyền (5%)" <b>chưa có hướng dẫn thống nhất</b> — câu hỏi gửi Bộ Tài chính 4/2026 vẫn chưa có trả lời chính thức đến 10/2026. <b>Chọn một cách, kê nhất quán, và xin xác nhận từ Cục Thuế nơi bạn ở.</b></div>
+  </section>
+
+  <section id="s4">
+    <div class="kicker">Trách nhiệm nền tảng</div>
+    <h2>Apple nộp thuế riêng — bạn tự lo phần của mình</h2>
+    <ul>
+      <li>Apple/Google nộp <b>thuế nhà cung cấp nước ngoài</b> (GTGT 10% + TNDN 5% trên doanh thu phát sinh tại VN) cho <b>phần hoa hồng của họ</b> — qua Cổng thông tin nhà cung cấp nước ngoài (Luật GTGT 48/2024, Luật TNDN 67/2025).</li>
+      <li><b>Phần trả bạn: bạn tự kê khai, tự nộp.</b> NĐ 117/2025/NĐ-CP chỉ bắt nền tảng TMĐT <b>có chức năng đặt hàng + thanh toán</b> (Shopee, Amazon…) khấu trừ/khai thay/nộp thay — chưa xác định rõ App Store/Google Play có thuộc nhóm này cho dev VN hay không.</li>
+    </ul>
+  </section>
+
+  <section id="s5">
+    <div class="kicker">Ngân hàng &amp; ngoại tệ</div>
+    <h2>Nhận tiền từ nước ngoài — được gì, cần gì</h2>
+    <table>
+      <tr><th>Vấn đề</th><th>Trả lời ngắn</th></tr>
+      <tr><td><b>Nhận SWIFT từ Apple về tài khoản cá nhân?</b></td><td><b>Được</b> — doanh thu xuất khẩu dịch vụ phần mềm là nguồn thu vãng lai (NĐ 70/2014 Điều 4, 5.1). Nên nhận vào tài khoản ngân hàng trong nước.</td></tr>
+      <tr><td><b>Phải khai báo NHNN không?</b></td><td><b>Không</b> — cá nhân không phải tự khai. Nhưng giao dịch <b>≥ ~400 triệu VND/lần</b> (hoặc dồn trong ngày) sẽ bị ngân hàng báo cáo + hỏi nguồn gốc (Luật Phòng chống rửa tiền 2022, TT 27/2025/TT-NHNN).</td></tr>
+      <tr><td><b>"50.000 USD" là gì?</b></td><td>Là <b>trần chuyển tiền ra nước ngoài</b> cho cá nhân (TT 20/2022/TT-NHNN), <b>không phải</b> hạn mức nhận. Hiểu nhầm mốc này là sai lầm phổ biến.</td></tr>
+      <tr><td><b>Tỷ giá kê khai?</b></td><td>Quy đổi USD→VND theo <b>tỷ giá mua vào của NHTM nơi mở tài khoản</b> tại thời điểm phát sinh doanh thu; có chênh lệch giữa các hướng dẫn → <b>lưu phiếu báo có kèm tỷ giá</b> và xác nhận với cơ quan thuế.</td></tr>
+      <tr><td><b>Chứng từ giữ mỗi lần nhận?</b></td><td>Báo cáo <b>Payments &amp; Financial Reports</b> từ App Store Connect + sao kê/phiếu báo có + hợp đồng Apple Developer.</td></tr>
+      <tr class="hl-bad"><td><b>Cấm gì?</b></td><td>Không dùng ngoại tệ để <b>thanh toán/định giá trong nước</b>; không đổi USD <b>ngoài hệ thống ngân hàng</b> — phạt hành chính (NĐ 88/2019, nay thay bằng NĐ 340/2025).</td></tr>
+    </table>
+  </section>
+
+  <section id="s6">
+    <div class="kicker">Chọn cấu trúc</div>
+    <h2>Cá nhân, hộ kinh doanh, hay công ty?</h2>
+    <table>
+      <tr><th>Tiêu chí</th><th>Cá nhân không đăng ký</th><th>Hộ kinh doanh</th><th>TNHH MTV / DNTN</th></tr>
+      <tr><td>Khi nào nên</td><td>Thu nhập nhỏ, app phụ</td><td>Doanh thu ổn định, cần MST giải trình</td><td>Doanh thu lớn, có chi phí/nhân sự</td></tr>
+      <tr><td>Thuế ≤ 1 tỷ/năm</td><td>Miễn GTGT+TNCN (phải thông báo doanh thu)</td><td>Như trái</td><td><b>Miễn TNDN</b> doanh thu ≤ 1 tỷ</td></tr>
+      <tr><td>Thuế &gt; 1 tỷ/năm</td><td>TNCN 2–5% + GTGT 0–5% trên doanh thu</td><td>Như trái (hoặc tính trên thu nhập thực 15–20%)</td><td>TNDN <b>20% trên lợi nhuận</b> + TNCN khi rút lãi</td></tr>
+      <tr><td>Khấu trừ phí Apple/công cụ</td><td>Không</td><td>Hạn chế</td><td><b>Có</b> (có chứng từ)</td></tr>
+      <tr><td>Hóa đơn điện tử</td><td>Không bắt buộc (≤ 1 tỷ)</td><td>Bắt buộc khi &gt; 1 tỷ</td><td>Bắt buộc</td></tr>
+      <tr><td>Trách nhiệm tài sản</td><td>Vô hạn</td><td>Vô hạn</td><td><b>Hữu hạn</b></td></tr>
+      <tr><td>Chi phí tuân thủ</td><td>Thấp nhất</td><td>Thấp</td><td>Cao (kế toán, BCTC)</td></tr>
+    </table>
+    <div class="callout">
+      <b>Khuyến nghị thực dụng</b>
+      <p>Doanh thu &lt; 1 tỷ: <b>không cần công ty</b>; đăng ký <b>hộ kinh doanh</b> (nếu ổn định) để có MST, dễ giải trình ngân hàng. Vượt 1 tỷ: cân nhắc giữ hộ KD (thuế đơn giản hơn hạch toán). Vài tỷ + chi phí/nhân sự/gọi vốn: chuyển công ty TNHH MTV. Ngành "lập trình máy tính (6201)" <b>không cần giấy phép con</b> cho app tiêu dùng.</p>
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="kicker">Mốc thời gian</div>
+    <h2>Lịch kê khai cả năm (2026)</h2>
+    <div class="timeline">
+      <div class="q">
+        <h4>Q1</h4>
+        <div class="mon">tháng 1 – 3</div>
+        <ul>
+          <li><b>30/01</b> — nộp thuế Q4 năm trước (nếu thuộc diện kê khai)</li>
+          <li><b>31/01</b> — thông báo doanh thu 6 tháng cuối năm trước</li>
+          <li><b>30/04</b> — nộp thuế Q1</li>
+        </ul>
+      </div>
+      <div class="q">
+        <h4>Q2</h4>
+        <div class="mon">tháng 4 – 6</div>
+        <ul>
+          <li><b>30/04</b> — quyết toán thuế TNCN năm (hạn chót)</li>
+          <li><b>31/07</b> — thông báo doanh thu 6 tháng đầu năm</li>
+        </ul>
+      </div>
+      <div class="q">
+        <h4>Q3</h4>
+        <div class="mon">tháng 7 – 9</div>
+        <ul>
+          <li><b>30/07</b> — nộp thuế Q2</li>
+          <li><b>30/10</b> — nộp thuế Q3</li>
+        </ul>
+      </div>
+      <div class="q">
+        <h4>Q4</h4>
+        <div class="mon">tháng 10 – 12</div>
+        <ul>
+          <li><b>Hằng tháng</b> — đối chiếu báo cáo Apple ↔ sao kê</li>
+          <li><b>31/01 năm sau</b> — nộp thuế Q4 + thông báo doanh thu 6T cuối</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:12px;">Hộ kinh doanh ≤ 1 tỷ chỉ cần <b>thông báo doanh thu</b> (không kê khai thuế định kỳ); hộ &gt; 1 tỷ mới phải nộp tờ khai quý 01/CNKD trên <code>eTax</code>. Đối chiếu mốc năm 2026 với hướng dẫn của cơ quan thuế quản lý.</p>
+  </section>
+
+  <section id="s8">
+    <div class="kicker">Tránh rủi ro</div>
+    <h2>Sai lầm thường gặp của solo dev</h2>
+    <ul>
+      <li><b>Không kê khai</b> khi có thu nhập → truy thu nhiều năm + phạt + tiền chậm nộp <b>0,03%/ngày</b>; tổng có thể gấp nhiều lần thuế gốc.</li>
+      <li><b>Doanh thu lẫn trong tài khoản cá nhân</b>, không tách bạch → khó giải trình, dễ bị cơ quan thuế <b>ấn định doanh thu</b>.</li>
+      <li><b>Nhận USD định kỳ không có hồ sơ</b> → ngân hàng hãm/yêu cầu chứng từ, chậm thanh toán với Apple.</li>
+      <li><b>Đổi ngoại tệ chợ đen / định giá bằng USD trong nước</b> → vi phạm ngoại hối, phạt tới 10–50 triệu đồng.</li>
+      <li><b>Kê khai sai nhóm ngành</b> (khai "hàng hóa" 0,5% thay vì "dịch vụ phần mềm" 2%) → chênh thuế + truy thu.</li>
+      <li><b>Dùng số liệu cũ</b>: ngưỡng 2026 đã là <b>1 tỷ</b>, hết thuế khoán, <b>bỏ lệ phí môn bài</b>.</li>
+      <li><b>Kê doanh thu bằng ngoại tệ gốc / quy đổi sai tỷ giá</b> → sai cơ sở tính thuế.</li>
+      <li><b>"Né thuế"</b> qua ví nước ngoài, chia nhỏ giao dịch, mượn tài khoản → giao dịch đáng ngờ, thuế vẫn truy theo thực nhận + phạt.</li>
+    </ul>
+  </section>
+
+  <section id="src">
+    <h2>Nguồn chính</h2>
+    <ul>
+      <li>Luật Thuế TNCN <b>109/2025/QH15</b> (Điều 3, 7) · Luật TNDN 67/2025 · Luật GTGT 48/2024 · Luật Quản lý thuế 38/2019 (sửa bởi Luật 56/2024) — xaydungchinhsach.chinhphu.vn, congbao.chinhphu.vn</li>
+      <li>Nghị định 68/2026/NĐ-CP &amp; Nghị định 141/2026/NĐ-CP (ngưỡng 1 tỷ, bỏ thuế khoán) — baochinhphu.vn</li>
+      <li>Nghị định 117/2025/NĐ-CP (khấu trừ/khai thay qua nền tảng TMĐT) — misa.vn</li>
+      <li>Nghị định 70/2014/NĐ-CP · TT 20/2022/TT-NHNN · Luật Phòng chống rửa tiền 2022 · TT 27/2025/TT-NHNN — luatvietnam.vn, tapchinganhang.gov.vn</li>
+      <li>Thông tư 40/2021/TT-BTC · TT 18/2026/TT-BTC · NĐ 126/2020/NĐ-CP · NĐ 125/2020/NĐ-CP</li>
+      <li>Trả lời Thuế Hưng Yên (baochinhphu 8/2025) · Công văn 1063/CT-CS (2/2026) · hỏi đáp CSTC Bộ Tài chính (tpcp.mof.gov.vn)</li>
+    </ul>
+    <p>Chi tiết vận hành (mẫu tờ khai, tỷ giá, tỷ lệ từng app, khung phạt) thay đổi nhanh — kiểm tra lại với cơ quan thuế quản lý trước khi nộp.</p>
+  </section>
+
+  <footer>
+    <p><b>Xem tiếp:</b> <a href="01-app-store-quy-trinh.html">01 — Quy trình xuất bản app lên App Store</a> · <a href="README.md">README (bản đồ tài liệu)</a></p>
+    <p style="margin-top:8px">⚠️ Miễn trừ trách nhiệm: Thông tin tham khảo, không phải tư vấn pháp lý/thuế. Mốc dữ liệu 19/10/2026. Kiểm tra văn bản gốc và hỏi cơ quan thuế/đại lý thuế trước khi quyết định.</p>
+  </footer>
+</div>
+
+<button id="theme" type="button" aria-label="Giao diện sáng/tối" title="Giao diện sáng/tối">☾</button>
+
+<script>
+  var btn = document.getElementById("theme");
+  function sync() {
+    btn.textContent = document.documentElement.classList.contains("dark") ? "☀" : "☾";
+  }
+  btn.addEventListener("click", function () {
+    var want = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", want);
+    try { localStorage.setItem("theme", want ? "dark" : "light"); } catch (e) {}
+    sync();
+  });
+  sync();
+</script>
+</body>
+</html>

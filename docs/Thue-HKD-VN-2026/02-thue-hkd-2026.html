@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thuế hộ kinh doanh 2026 · VN</title>
+<script>
+(function () {
+  var q = location.search.indexOf("theme=dark") !== -1;
+  var t = null;
+  try { t = localStorage.getItem("theme"); } catch (e) {}
+  if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches)))
+    document.documentElement.classList.add("dark");
+})();
+</script>
+<style>
+  :root {
+    --bg:#FAF9F5; --ink:#141413; --card:#FFF; --line:#D1CFC5; --line-soft:#E7E4DA;
+    --mut:#87867F; --mut2:#3D3D3A;
+    --clay:#D97757; --olive:#6B7F51; --rust:#B04A3F;
+    --ok-soft:rgba(107,127,81,.12); --bad-soft:rgba(176,74,63,.10); --clay-soft:rgba(217,119,87,.14);
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  html.dark {
+    --bg:#121110; --ink:#EDEAE3; --card:#1B1A17; --line:#3A3831; --line-soft:#2B2924;
+    --mut:#9A988F; --mut2:#C9C7BD;
+    --clay:#E08A6B; --olive:#8FA269; --rust:#CF6A5C;
+    --ok-soft:rgba(143,162,105,.14); --bad-soft:rgba(207,106,92,.14); --clay-soft:rgba(224,138,107,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; padding:44px 20px 88px; transition:background .2s,color .2s; }
+  .sheet { max-width:980px; margin:0 auto; }
+
+  header { margin-bottom:30px; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--mut); margin-bottom:10px; }
+  h1 { font-family:var(--serif); font-weight:500; font-size:31px; letter-spacing:-.01em; line-height:1.15; margin-bottom:10px; }
+  .lead { font-size:14px; line-height:1.6; color:var(--mut2); max-width:680px; }
+  code { font-family:var(--mono); font-size:.85em; background:var(--ok-soft); border:1px solid var(--line-soft); border-radius:5px; padding:1px 5px; }
+  .note { margin:16px 0; padding:12px 15px; border:1.5px solid var(--line); border-left:4px solid var(--clay); border-radius:10px; background:var(--card); font-size:13.5px; line-height:1.6; color:var(--mut2); }
+  .note b { color:var(--ink); }
+  .toc { display:flex; flex-wrap:wrap; gap:7px; margin:20px 0 28px; }
+  .toc a { font-family:var(--mono); font-size:12px; color:var(--mut2); text-decoration:none; border:1.5px solid var(--line); border-radius:999px; padding:5px 12px; background:var(--card); }
+  .toc a:hover { border-color:var(--clay); color:var(--ink); }
+
+  .canvas { border:1.5px solid var(--line); border-radius:14px; background:var(--card); padding:20px; overflow-x:auto; }
+  svg.flow { display:block; width:100%; height:auto; }
+  .flow text { font-family:var(--mono); font-size:12px; fill:var(--ink); }
+  .flow .sub { font-size:9.5px; fill:var(--mut); }
+  .flow .num { font-size:14px; font-weight:700; fill:var(--clay); }
+  .node rect, .node path { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+  .node.rx rect { rx:8; }
+  .node.term rect { fill:var(--clay-soft); rx:18; }
+  .node.ok rect { fill:var(--ok-soft); stroke:var(--olive); }
+  .node.bad rect { fill:var(--bad-soft); stroke:var(--rust); }
+  .edge { stroke:var(--mut); stroke-width:1.4; fill:none; marker-end:url(#arrow); }
+  .edge.no { stroke:var(--rust); stroke-dasharray:4 4; marker-end:url(#arrow-rust); }
+  .edge.yes { stroke:var(--olive); marker-end:url(#arrow-olive); }
+  .legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:12px; font-size:11.5px; color:var(--mut2); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .chip { width:18px; height:11px; border:1.5px solid var(--line); border-radius:3px; background:var(--card); }
+  .chip.gate { width:11px; height:11px; transform:rotate(45deg); border-radius:2px; }
+  .chip.ok { background:var(--ok-soft); border-color:var(--olive); }
+  .chip.bad { background:var(--bad-soft); border-color:var(--rust); }
+
+  section { margin-top:40px; }
+  section h2 { font-family:var(--serif); font-weight:500; font-size:22px; letter-spacing:-.01em; margin-bottom:5px; }
+  .kicker { font-family:var(--mono); font-size:11px; color:var(--clay); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  section p, section li { font-size:14px; line-height:1.66; color:var(--mut2); }
+  section p { margin-top:10px; }
+  ul { margin:10px 0 0 18px; }
+  li { margin-top:5px; }
+  .hl { list-style:none; background:var(--ok-soft); padding:5px 8px; border-radius:5px; }
+
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  th { font-family:var(--serif); font-weight:500; color:var(--ink); font-size:13.5px; border-bottom:1.5px solid var(--line); }
+  td { color:var(--mut2); line-height:1.5; }
+  tr.hl td { background:var(--ok-soft); }
+  tr.hl-bad td { background:var(--bad-soft); }
+
+  .timeline { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+  .q { border:1.5px solid var(--line); border-radius:12px; background:var(--card); padding:12px 14px; }
+  .q h4 { font-family:var(--serif); font-weight:500; font-size:16px; margin-bottom:2px; }
+  .q .mon { font-family:var(--mono); font-size:10.5px; color:var(--clay); margin-bottom:8px; }
+  .q ul { margin:0; }
+  .q li { font-size:12px; line-height:1.5; margin-top:7px; }
+  .q li b { color:var(--ink); }
+  @media (max-width:760px) { .timeline { grid-template-columns:1fr 1fr; } }
+
+  .callout { margin:16px 0; padding:12px 16px; border-radius:10px; background:var(--clay-soft); border:1.5px solid var(--clay); }
+  .callout b { font-family:var(--serif); font-size:15px; }
+  .callout p { color:var(--ink); margin-top:4px; }
+
+  footer { margin-top:50px; padding-top:18px; border-top:1.5px solid var(--line); }
+  footer p { font-size:12.5px; line-height:1.6; color:var(--mut); }
+  footer a { color:var(--clay); text-decoration:none; }
+
+  #theme { position:fixed; top:14px; right:16px; z-index:50; border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; width:34px; height:34px; cursor:pointer; font-size:15px; }
+  #theme:hover { border-color:var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">Hộ Kinh Doanh Việt Nam · thuế 2026</div>
+  <h1>Thuế hộ kinh doanh: ngưỡng, tỷ lệ, kê khai &amp; lịch năm</h1>
+  <p class="lead">Cập nhật theo Nghị định 68/2026/NĐ-CP và Nghị định 141/2026/NĐ-CP. Ngưỡng miễn thuế mới, 3 nhóm HKD, tỷ lệ GTGT/TNCN cho từng ngành, lịch kê khai và sai lầm thường gặp.</p>
+  <div class="toc">
+    <a href="#s0">Sơ đồ quyết định</a>
+    <a href="#s1">Ngưỡng 1 tỷ</a>
+    <a href="#s2">Tỷ lệ thuế</a>
+    <a href="#s3">Kê khai</a>
+    <a href="#s4">Lịch năm</a>
+    <a href="#s5">Sai lầm</a>
+  </div>
+</header>
+
+<section id="s0">
+  <div class="kicker">Dòng chảy nghĩa vụ</div>
+  <h2>Xác định nhóm &amp; loại thuế của HKD</h2>
+  <div class="canvas">
+    <svg class="flow" viewBox="0 0 640 560">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/></marker>
+        <marker id="arrow-rust" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--rust)"/></marker>
+        <marker id="arrow-olive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--olive)"/></marker>
+      </defs>
+
+      <g class="node term"><rect x="170" y="10" width="300" height="42"/><text x="320" y="30" text-anchor="middle">HỘ KINH DOANH — doanh thu cả năm</text><text class="sub" x="320" y="46" text-anchor="middle">tổng doanh thu từ bán hàng / cung cấp dịch vụ</text></g>
+      <path class="edge" d="M320,52 L320,108"/>
+      <g class="node gate"><path d="M320,108 L374,150 L320,192 L266,150 Z"/><text x="320" y="154" text-anchor="middle">Doanh thu &gt; 1 tỷ/năm?</text></g>
+
+      <path class="edge no" d="M266,150 C170,150 165,168 162,192 L162,192"/>
+      <text class="lbl" x="84" y="182" fill="var(--rust)">không (≤ 1 tỷ)</text>
+      <g class="node ok"><rect class="rx" x="32" y="206" width="176" height="82"/><text x="120" y="228" text-anchor="middle">MIỄN GTGT + TNCN</text><text class="sub" x="120" y="244" text-anchor="middle">Nhóm 1 — chỉ cần</text><text class="sub" x="120" y="257" text-anchor="middle">thông báo doanh thu</text><text class="sub" x="120" y="272" text-anchor="middle">31/07 &amp; 31/01 (eTax)</text></g>
+
+      <path class="edge yes" d="M320,192 L320,240"/>
+      <text class="lbl" x="330" y="222" fill="var(--olive)">có (&gt; 1 tỷ)</text>
+      <g class="node rx"><rect x="196" y="240" width="248" height="56"/><text x="320" y="262" text-anchor="middle">Nhóm 2 — KÊ KHAI THUẾ THEO QUÝ</text><text class="sub" x="320" y="278" text-anchor="middle">mẫu 01/CNKD trên eTax · GTGT + TNCN</text><text class="sub" x="320" y="291" text-anchor="middle">hạn nộp: 30 đầu tháng quý sau</text></g>
+
+      <path class="edge" d="M320,296 L90,340"/>
+      <path class="edge" d="M320,296 L320,340"/>
+      <path class="edge" d="M320,296 L540,340"/>
+      <g class="node rx"><rect x="38" y="340" width="160" height="50"/><text x="118" y="362" text-anchor="middle">Hóa đơn điện tử</text><text class="sub" x="118" y="376" text-anchor="middle">bắt buộc &gt; 1 tỷ</text></g>
+      <g class="node rx"><rect x="232" y="340" width="176" height="50"/><text x="320" y="362" text-anchor="middle">Quyết toán thuế năm</text><text class="sub" x="320" y="376" text-anchor="middle">hạn 30/04 năm sau</text></g>
+      <g class="node rx"><rect x="488" y="340" width="132" height="50"/><text x="554" y="362" text-anchor="middle">Lưu chứng từ</text><text class="sub" x="554" y="376" text-anchor="middle">≥ 10 năm</text></g>
+
+      <g class="node bad term"><rect x="140" y="450" width="360" height="56"/><text x="320" y="472" text-anchor="middle">Vùng xám: tỷ lệ GTGT/TNCN phụ thuộc loại ngành</text><text class="sub" x="320" y="490" text-anchor="middle">Xem bảng tỷ lệ cụ thể bên dưới · xin xác nhận từ Cục Thuế quản lý</text></g>
+      <path class="edge" d="M320,390 L320,450"/>
+    </svg>
+    <div class="legend">
+      <span><i class="chip"></i> nghĩa vụ</span>
+      <span><i class="chip gate"></i> ngưỡng</span>
+      <span><i class="chip ok"></i> miễn thuế</span>
+      <span><i class="chip bad"></i> có thể vùng xám</span>
+    </div>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="kicker">Ngưỡng miễn thuế</div>
+  <h2>1 tỷ đồng/năm — thay đổi lớn nhất 2026</h2>
+  <p>Nghị định 141/2026/NĐ-CP (hồi tố từ 1/1/2026) nâng ngưỡng doanh thu miễn GTGT + TNCN cho HKD từ 100 triệu lên <b>1 tỷ đồng/năm</b>.</p>
+  <table>
+    <tr><th>Doanh thu năm</th><th>GTGT</th><th>TNCN</th><th>Nghĩa vụ đi kèm</th></tr>
+    <tr class="hl"><td><b>≤ 1 tỷ</b></td><td><b>Miễn</b></td><td><b>Miễn</b></td><td><b>Thông báo doanh thu</b> (31/7 &amp; 31/1). Nếu vượt giữa năm → kê khai từ quý vượt. Không cần HĐĐT.</td></tr>
+    <tr class="hl-bad"><td><b>&gt; 1 tỷ</b></td><td><b>Phải nộp</b> (0–5%)</td><td><b>Phải nộp</b> (0,5–5%)</td><td>Kê khai quý, HĐĐT, quyết toán năm. Tính thuế trên <b>toàn bộ</b> doanh thu (cửa).</td></tr>
+  </table>
+  <div class="note"><b>Lưu ý "cửa":</b> vượt 1 tỷ một đồng cũng tính thuế trên toàn bộ doanh thu, không chỉ phần vượt. Lên kế hoạch ngay khi gần ngưỡng.</div>
+</section>
+
+<section id="s2">
+  <div class="kicker">Tỷ lệ cụ thể</div>
+  <h2>GTGT và TNCN cho từng loại ngành (<b>khi > 1 tỷ</b>)</h2>
+  <table>
+    <tr><th>Loại hoạt động</th><th>GTGT</th><th>TNCN</th><th>Ghi chú</th></tr>
+    <tr class="hl"><td>Phân phối hàng hóa</td><td>1%</td><td>0,5%</td><td>TT 40/2021, Luật TNCN 109/2025 Điều 7</td></tr>
+    <tr class="hl"><td><b>Dịch vụ (CNTT, phần mềm, app)</b></td><td><b>5%</b> (hoặc 0% nếu là sản phẩm phần mềm)</td><td><b>2%</b></td><td>TT 40/2021 Phụ lục I; Báo Chính phủ 8/2025</td></tr>
+    <tr><td>Sản xuất, gia công, vận tải</td><td>3%</td><td>1,5%</td><td>Luật TNCN 109/2025 Điều 7</td></tr>
+    <tr class="hl-bad"><td><b>Nội dung số (game, quảng cáo số…)</b></td><td><b>5%</b></td><td><b>5%</b></td><td>Luật TNCN 109/2025 Điều 7.3 — vùng xám với app thông thường</td></tr>
+    <tr><td>Cho thuê tài sản</td><td>5%</td><td>5%</td><td>Luật TNCN 109/2025 Điều 7</td></tr>
+    <tr><td>Kinh doanh khác</td><td>2%</td><td>1%</td><td>Luật TNCN 109/2025 Điều 7</td></tr>
+  </table>
+  <div class="callout">
+    <b>Vùng xám: app của bạn thuộc "dịch vụ CNTT (2%)" hay "nội dung số (5%)"?</b>
+    <p>Cơ quan thuế chưa có hướng dẫn thống nhất cho dev viết app. Cách an toàn: <b>chọn một tỷ lệ, kê khai nhất quán, và xin văn bản xác nhận từ Cục Thuế nơi bạn quản lý.</b> Nếu app có quảng cáo trong đó, có thể bị xếp vào "nội dung số" với tỷ lệ cao hơn.</p>
+  </div>
+  <p><b>Phương pháp thay thế</b> (hộ có sổ sách, chứng từ đầy đủ): tính trên thu nhập chịu thuế (doanh thu − chi phí) với thuế suất <b>15–20%</b> (tùy quy mô).</p>
+</section>
+
+<section id="s3">
+  <div class="kicker">Kê khai</div>
+  <h2>Tờ khai, hạn nộp &amp; mức phạt</h2>
+  <table>
+    <tr><th>Loại</th><th>Tờ khai</th><th>Hạn nộp hồ sơ</th><th>Hạn nộp tiền</th></tr>
+    <tr><td>GTGT + TNCN (hàng quý)</td><td>01/CNKD trên eTax</td><td>30 tháng đầu quý sau</td><td>Cùng hạn hồ sơ</td></tr>
+    <tr><td>Quyết toán TNCN năm</td><td>Tờ khai quyết toán</td><td>30/04 năm sau</td><td>30/04</td></tr>
+    <tr class="hl"><td>Thông báo doanh thu (≤ 1 tỷ)</td><td>Thông báo qua eTax (không mẫu tờ khai)</td><td>31/07 (6T đầu) · 31/01 năm sau (6T cuối)</td><td>Không có (chỉ thông báo)</td></tr>
+  </table>
+  <ul>
+    <li><b>Chậm nộp hồ sơ:</b> phạt 2–5 triệu đồng (NĐ 125/2020).</li>
+    <li><b>Chậm nộp tiền thuế:</b> lãi <b>0,03%/ngày</b> trên số chậm nộp (Luật Quản lý thuế Điều 59).</li>
+    <li><b>Trốn thuế:</b> phạt 1–3 lần số thuế trốn; truy cứu hình sự nếu đủ yếu tố.</li>
+    <li><b>Hóa đơn điện tử:</b> bắt buộc với HKD > 1 tỷ (NĐ 68/2026); cần chữ ký số.</li>
+  </ul>
+</section>
+
+<section id="s4">
+  <div class="kicker">Lịch năm</div>
+  <h2>Các mốc kê khai qua 4 quý (2026)</h2>
+  <div class="timeline">
+    <div class="q">
+      <h4>Q1</h4>
+      <div class="mon">tháng 1 – 3</div>
+      <ul>
+        <li><b>30/01</b> — nộp thuế Q4 năm trước</li>
+        <li><b>31/01</b> — thông báo DT 6T cuối năm trước</li>
+        <li><b>30/04</b> — nộp thuế Q1</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q2</h4>
+      <div class="mon">tháng 4 – 6</div>
+      <ul>
+        <li><b>30/04</b> — quyết toán TNCN năm (hạn chót)</li>
+        <li><b>30/07</b> — nộp thuế Q2</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q3</h4>
+      <div class="mon">tháng 7 – 9</div>
+      <ul>
+        <li><b>31/07</b> — thông báo DT 6 tháng đầu năm</li>
+        <li><b>30/10</b> — nộp thuế Q3</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q4</h4>
+      <div class="mon">tháng 10 – 12</div>
+      <ul>
+        <li><b>Hằng tháng/quý</b> — đối chiếu DT nền tảng ↔ sao kê</li>
+        <li><b>31/01 năm sau</b> — nộp thuế Q4 + thông báo DT 6T cuối</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:10px;">HKD ≤ 1 tỷ <b>chỉ cần thông báo doanh thu</b> (không kê khai thuế định kỳ). HKD > 1 tỷ mới phải nộp tờ khai quý 01/CNKD trên <code>eTax</code>. Đối chiếu mốc năm với hướng dẫn của cơ quan thuế quản lý.</p>
+</section>
+
+<section id="s5">
+  <div class="kicker">Tránh rủi ro</div>
+  <h2>Sai lầm thường gặp</h2>
+  <ol>
+    <li><b>Không thông báo doanh thu dù ≤ 1 tỷ</b> — có thể bị phạt cảnh cáo hoặc phạt tiền. NĐ 68/2026 yêu cầu thông báo 2 lần/năm.</li>
+    <li><b>Nhầm ngưỡng cũ "100 triệu"</b> — 2026 đã thành <b>1 tỷ</b>. Lỡ thông báo hoặc tính sai dẫn đến truy thu.</li>
+    <li><b>Kê khai sai nhóm ngành</b> — khai "hàng hóa 0,5%" thay vì "dịch vụ 2%" → chênh thuế, phạt thiếu.</li>
+    <li><b>Không lưu chứng từ</b> — sao kê ngân hàng, báo cáo doanh thu từ nền tảng, tờ khai đã nộp. Lưu tối thiểu <b>10 năm</b>.</li>
+    <li><b>Tưởng đăng ký HKD xong là hết</b> — quên nghĩa vụ thông báo/kê khai định kỳ.</li>
+    <li><b>Dùng "khoán" cũ</b> — NĐ 68/2026 bỏ khoán thuần túy; giờ là 3 nhóm + kê khai.</li>
+    <li><b>Không dùng eTax / không theo dõi hạn</b> — nộp muộn → phạt + lãi chậm nộp 0,03%/ngày.</li>
+    <li><b>Cho rằng Apple/Google khấu trừ thay</b> (với dev bán app) — xem tài liệu <code>docs/solodev/</code>. Họ <b>không</b> khấu trừ thuế VN thay bạn.</li>
+  </ol>
+</section>
+
+<footer>
+  <p><b>Xem tiếp:</b> <a href="01-quy-trinh-mo-hkd.html">01 — Quy trình mở hộ kinh doanh</a> · <a href="README.md">README (bản đồ tài liệu)</a></p>
+  <p style="margin-top:6px">⚠️ Miễn trừ: Thông tin tham khảo. Kiểm tra văn bản gốc và hỏi cơ quan thuế/đại lý thuế trước khi kê khai. Mốc dữ liệu 19/10/2026.</p>
+</footer>
+</div>
+
+<button id="theme" type="button" aria-label="Giao diện">☾</button>
+<script>
+var btn=document.getElementById("theme");
+function sync(){btn.textContent=document.documentElement.classList.contains("dark")?"☀":"☾";}
+btn.addEventListener("click",function(){
+  var w=!document.documentElement.classList.contains("dark");
+  document.documentElement.classList.toggle("dark",w);
+  try{localStorage.setItem("theme",w?"dark":"light");}catch(e){}
+  sync();
+});
+sync();
+</script>
+</body>
+</html>

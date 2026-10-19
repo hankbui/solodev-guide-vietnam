@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quy trình mở hộ kinh doanh · VN 2026</title>
+<script>
+(function () {
+  var q = location.search.indexOf("theme=dark") !== -1;
+  var t = null;
+  try { t = localStorage.getItem("theme"); } catch (e) {}
+  if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches)))
+    document.documentElement.classList.add("dark");
+})();
+</script>
+<style>
+  :root {
+    --bg:#FAF9F5; --ink:#141413; --card:#FFF; --line:#D1CFC5; --line-soft:#E7E4DA;
+    --mut:#87867F; --mut2:#3D3D3A;
+    --clay:#D97757; --olive:#6B7F51; --rust:#B04A3F;
+    --ok-soft:rgba(107,127,81,.12); --bad-soft:rgba(176,74,63,.10); --clay-soft:rgba(217,119,87,.14);
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  html.dark {
+    --bg:#121110; --ink:#EDEAE3; --card:#1B1A17; --line:#3A3831; --line-soft:#2B2924;
+    --mut:#9A988F; --mut2:#C9C7BD;
+    --clay:#E08A6B; --olive:#8FA269; --rust:#CF6A5C;
+    --ok-soft:rgba(143,162,105,.14); --bad-soft:rgba(207,106,92,.14); --clay-soft:rgba(224,138,107,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; padding:44px 20px 88px; transition:background .2s,color .2s; }
+  .sheet { max-width:980px; margin:0 auto; }
+
+  header { margin-bottom:30px; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--mut); margin-bottom:10px; }
+  h1 { font-family:var(--serif); font-weight:500; font-size:31px; letter-spacing:-.01em; line-height:1.15; margin-bottom:10px; }
+  .lead { font-size:14px; line-height:1.6; color:var(--mut2); max-width:680px; }
+  code { font-family:var(--mono); font-size:.85em; background:var(--ok-soft); border:1px solid var(--line-soft); border-radius:5px; padding:1px 5px; }
+  .note { margin:16px 0; padding:12px 15px; border:1.5px solid var(--line); border-left:4px solid var(--clay); border-radius:10px; background:var(--card); font-size:13.5px; line-height:1.6; color:var(--mut2); }
+  .note b { color:var(--ink); }
+  .toc { display:flex; flex-wrap:wrap; gap:7px; margin:20px 0 28px; }
+  .toc a { font-family:var(--mono); font-size:12px; color:var(--mut2); text-decoration:none; border:1.5px solid var(--line); border-radius:999px; padding:5px 12px; background:var(--card); }
+  .toc a:hover { border-color:var(--clay); color:var(--ink); }
+
+  .canvas { border:1.5px solid var(--line); border-radius:14px; background:var(--card); padding:20px; overflow-x:auto; }
+  svg.flow { display:block; width:100%; height:auto; }
+  .flow text { font-family:var(--mono); font-size:12px; fill:var(--ink); }
+  .flow .sub { font-size:9px; fill:var(--mut); }
+  .flow .num { font-size:14px; font-weight:700; fill:var(--clay); }
+  .node rect, .node path { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+  .node.rx rect { rx:8; }
+  .node.term rect { fill:var(--clay-soft); rx:18; }
+  .node.ok rect { fill:var(--ok-soft); stroke:var(--olive); }
+  .node.bad rect { fill:var(--bad-soft); stroke:var(--rust); }
+  .edge { stroke:var(--mut); stroke-width:1.4; fill:none; marker-end:url(#arrow); }
+
+  section { margin-top:40px; }
+  section h2 { font-family:var(--serif); font-weight:500; font-size:22px; letter-spacing:-.01em; margin-bottom:5px; }
+  .kicker { font-family:var(--mono); font-size:11px; color:var(--clay); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  section p, section li { font-size:14px; line-height:1.66; color:var(--mut2); }
+  section p { margin-top:10px; }
+  ul { margin:10px 0 0 18px; }
+  li { margin-top:5px; }
+
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  th { font-family:var(--serif); font-weight:500; color:var(--ink); font-size:13.5px; border-bottom:1.5px solid var(--line); }
+  td { color:var(--mut2); line-height:1.5; }
+  tr.hl td { background:var(--ok-soft); }
+  tr.hl-bad td { background:var(--bad-soft); }
+
+  .callout { margin:16px 0; padding:12px 16px; border-radius:10px; background:var(--clay-soft); border:1.5px solid var(--clay); }
+  .callout b { font-family:var(--serif); font-size:15px; }
+  .callout p { color:var(--ink); margin-top:4px; }
+
+  .compare { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
+  .compare .col { border:1.5px solid var(--line); border-radius:10px; background:var(--card); padding:12px 14px; }
+  .compare .col h4 { font-family:var(--serif); font-weight:500; font-size:15px; margin-bottom:3px; }
+  .compare .col .price { font-family:var(--mono); font-size:14px; color:var(--clay); margin-bottom:8px; }
+  .compare .col ul { margin:0; }
+  .compare .col li { font-size:12px; line-height:1.5; margin:6px 0 0; }
+  @media (max-width:680px) { .compare { grid-template-columns:1fr; } }
+
+  footer { margin-top:50px; padding-top:18px; border-top:1.5px solid var(--line); }
+  footer p { font-size:12.5px; line-height:1.6; color:var(--mut); }
+  footer a { color:var(--clay); text-decoration:none; }
+
+  #theme { position:fixed; top:14px; right:16px; z-index:50; border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; width:34px; height:34px; cursor:pointer; font-size:15px; }
+  #theme:hover { border-color:var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">Hộ Kinh Doanh Việt Nam · cập nhật 2026</div>
+  <h1>Mở hộ kinh doanh từ A đến Z</h1>
+  <p class="lead">Quy trình 6 bước cho cá nhân mở HKD — từ hồ sơ, nộp đơn, nhận giấy phép, đến nghĩa vụ thuế sau đăng ký. Kèm so sánh chi phí với công ty TNHH MTV và điểm mới 2026.</p>
+  <div class="toc">
+    <a href="#s0">6 bước</a>
+    <a href="#s1">Đối tượng</a>
+    <a href="#s2">Hồ sơ</a>
+    <a href="#s3">Nơi nộp</a>
+    <a href="#s4">Sau đăng ký</a>
+    <a href="#s5">Ngành nghề CNTT</a>
+    <a href="#s6">Điểm mới 2026</a>
+    <a href="#s7">So sánh chi phí</a>
+  </div>
+  <div class="note"><b>Đọc trước:</b> tài liệu tham khảo, không phải tư vấn pháp lý. Thủ tục có thể thay đổi theo địa phương. Kiểm tra với UBND & cơ quan thuế nơi bạn cư trú.</div>
+</header>
+
+<section id="s0">
+  <div class="kicker">Tổng quan</div>
+  <h2>6 bước mở hộ kinh doanh</h2>
+  <div class="canvas">
+    <svg class="flow" viewBox="0 0 460 660">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/></marker>
+      </defs>
+      <g class="node term"><rect x="130" y="10" width="200" height="42"/><text x="230" y="33" text-anchor="middle">QUYẾT ĐỊNH MỞ HKD</text></g>
+      <path class="edge" d="M230,52 L230,78"/>
+      <g class="node rx"><rect x="140" y="78" width="180" height="46"/><text x="230" y="98" text-anchor="middle"><tspan class="num">1</tspan>  Xác định ngành nghề</text><text class="sub" x="230" y="115" text-anchor="middle">Tra mã VSIC 2025</text></g>
+      <path class="edge" d="M230,124 L230,150"/>
+      <g class="node rx"><rect x="140" y="150" width="180" height="46"/><text x="230" y="170" text-anchor="middle"><tspan class="num">2</tspan>  Chuẩn bị hồ sơ</text><text class="sub" x="230" y="187" text-anchor="middle">Mẫu 1 + CCCD + VNeID</text></g>
+      <path class="edge" d="M230,196 L230,222"/>
+      <g class="node rx"><rect x="140" y="222" width="180" height="46"/><text x="230" y="242" text-anchor="middle"><tspan class="num">3</tspan>  Nộp hồ sơ</text><text class="sub" x="230" y="259" text-anchor="middle">Trực tiếp UBND xã / Online</text></g>
+      <path class="edge" d="M230,268 L230,294"/>
+      <g class="node ok"><rect class="rx" x="130" y="294" width="200" height="46"/><text x="230" y="314" text-anchor="middle"><tspan class="num">4</tspan>  Nhận GCN ĐKKD</text><text class="sub" x="230" y="331" text-anchor="middle">Tối đa 03 ngày · lệ phí 50.000đ</text></g>
+      <path class="edge" d="M230,340 L230,366"/>
+      <g class="node rx"><rect x="140" y="366" width="180" height="46"/><text x="230" y="386" text-anchor="middle"><tspan class="num">5</tspan>  MST tự động</text><text class="sub" x="230" y="403" text-anchor="middle">CQ thuế cấp tự động · không cần riêng</text></g>
+      <path class="edge" d="M230,412 L230,438"/>
+      <g class="node ok term"><rect x="120" y="438" width="220" height="50"/><text x="230" y="460" text-anchor="middle"><tspan class="num">6</tspan>  Kê khai / thông báo doanh thu</text><text class="sub" x="230" y="477" text-anchor="middle">Hàng quý (nếu > 1 tỷ) · 31/7 & 31/1 (nếu ≤ 1 tỷ)</text></g>
+
+      <g font-size="10" fill="var(--mut)" font-family="monospace">
+        <text x="320" y="94">Xác định</text>
+        <text x="320" y="108">ngành nghề</text>
+        <text x="320" y="166">TM 68/2025</text>
+        <text x="320" y="238">UBND xã</text>
+        <text x="320" y="310">hokinhdoanh.dkkd.gov.vn</text>
+        <text x="320" y="382">Liên thông</text>
+        <text x="320" y="396">đăng ký thuế</text>
+        <text x="320" y="457">NĐ 68+141/2026</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="kicker">Ai được mở?</div>
+  <h2>Đối tượng &amp; điều kiện</h2>
+  <ul>
+    <li>Công dân VN <b>đủ 18 tuổi</b>, năng lực hành vi dân sự đầy đủ.</li>
+    <li>Cá nhân hoặc hộ gia đình (nhiều thành viên).</li>
+    <li><b>Chịu trách nhiệm vô hạn</b> — không có tư cách pháp nhân; chủ hộ chịu trách nhiệm bằng toàn bộ tài sản.</li>
+    <li><b>Lao động ≤ 10 người</b> (NĐ 01/2021/NĐ-CP được kế thừa bởi NĐ 168/2025, Điều 80).</li>
+    <li>Doanh thu <b>không bị giới hạn</b> theo luật đăng ký — liên quan đến nghĩa vụ thuế (ngưỡng 1 tỷ).</li>
+  </ul>
+</section>
+
+<section id="s2">
+  <div class="kicker">Hồ sơ</div>
+  <h2>Giấy tờ cần chuẩn bị</h2>
+  <table>
+    <tr><th>Giấy tờ</th><th>Mẫu / Nguồn</th><th>Ghi chú</th></tr>
+    <tr><td><b>Giấy đề nghị đăng ký HKD</b></td><td>Mẫu 1, Phụ lục II TT 68/2025/TT-BTC</td><td>Tải file .docx từ dangkykinhdoanh.gov.vn. Khai thông tin chủ hộ, địa chỉ, ngành nghề, vốn.</td></tr>
+    <tr class="hl"><td><b>Bản sao CCCD/CCCD</b> chủ hộ</td><td>Chụp mặt trước/sau</td><td><b>Online:</b> scan + VNeID, không cần công chứng. <b>Trực tiếp:</b> bản sao chứng thực hoặc đối chiếu bản chính.</td></tr>
+    <tr><td><b>Văn bản ủy quyền</b> (nếu nhiều thành viên)</td><td>Không mẫu cố định</td><td>Phải công chứng/chứng thực. Mỗi thành viên ký.</td></tr>
+    <tr class="hl-bad"><td><b>Giấy tờ bổ sung</b> (ngành có điều kiện)</td><td>Chứng chỉ hành nghề, giấy phép con…</td><td>VD: an toàn thông tin, game online, TMĐT. Với dev làm phần mềm/app tiêu dùng: <b>không cần</b>.</td></tr>
+  </table>
+  <p><b>Địa điểm KD:</b> được dùng địa chỉ nhà ở, không cần xin phép riêng (trừ chung cư hạn chế / khu vực cấm theo quy hoạch địa phương).</p>
+</section>
+
+<section id="s3">
+  <div class="kicker">Nộp & xử lý</div>
+  <h2>Nơi nộp, thời gian, lệ phí</h2>
+  <table>
+    <tr><th>Phương thức</th><th>Mô tả</th><th>Yêu cầu</th></tr>
+    <tr><td><b>Trực tiếp</b></td><td>UBND xã/phường/thị trấn nơi đặt địa điểm KD</td><td>Nộp 1 bộ hồ sơ · nhận giấy biên nhận</td></tr>
+    <tr class="hl"><td><b>Online</b></td><td><a href="https://hokinhdoanh.dkkd.gov.vn">hokinhdoanh.dkkd.gov.vn</a></td><td><b>Bắt buộc tài khoản VNeID</b> · nộp 24/7 · theo dõi trạng thái online</td></tr>
+    <tr><td><b>Bưu chính</b></td><td>Gửi bảo đảm đến UBND xã</td><td>Giấy tờ bản cứng · thời gian lâu hơn</td></tr>
+  </table>
+  <ul>
+    <li><b>Thời gian xử lý:</b> tối đa <b>03 ngày làm việc</b> từ hồ sơ hợp lệ.</li>
+    <li><b>Lệ phí:</b> <b>50.000 đồng/lần</b> (Thông tư 47/2019/TT-BTC). Không hoàn lại nếu bị từ chối.</li>
+    <li><b>Đã bãi bỏ lệ phí môn bài</b> từ 1/1/2026 — không phải nộp 300–500k/năm.</li>
+    <li>Nếu không hợp lệ: thông báo trong 03 ngày, nêu rõ lý do + yêu cầu sửa.</li>
+  </ul>
+</section>
+
+<section id="s4">
+  <div class="kicker">Sau đăng ký</div>
+  <h2>Nhận GCN &amp; MST — tự động liên thông</h2>
+  <ul>
+    <li>Sau cấp Giấy chứng nhận ĐKKD, cơ quan ĐKKD cấp xã <b>tự động gửi thông báo đến cơ quan thuế</b>.</li>
+    <li>HKD được <b>cấp MST tự động</b>, không cần làm thủ tục đăng ký thuế riêng (Luật Quản lý thuế 38/2019 sửa đổi 2024).</li>
+    <li>Số MST thể hiện trên GCN hoặc gửi riêng.</li>
+  </ul>
+  <div class="note"><b>Chế tài nếu không đăng ký thuế:</b> phạt cảnh cáo hoặc 1–3 triệu đồng (NĐ 125/2020). Nay đã liên thông nên gần như tự động.</div>
+  <p><b>Sau đó, nghĩa vụ chính:</b> kê khai / thông báo doanh thu định kỳ, xuất hóa đơn điện tử (nếu > 1 tỷ), lưu trữ chứng từ 10 năm.</p>
+</section>
+
+<section id="s5">
+  <div class="kicker">Ngành nghề</div>
+  <h2>Lập trình viên, dev, CNTT — có cần giấy phép con?</h2>
+  <ul>
+    <li><b>6201 — Lập trình máy vi tính</b> · <b>6202 — Tư vấn hệ thống</b> · <b>6209 — Dịch vụ CNTT khác</b></li>
+    <li class="hl"><b>Các ngành này KHÔNG nằm trong danh mục ngành nghề kinh doanh có điều kiện</b> (theo danh mục của Cổng ĐKKD Quốc gia). → <b>Không cần giấy phép con</b> cho dev viết app/phần mềm tiêu dùng.</li>
+    <li><b>HKD được phép kinh doanh ngành có điều kiện</b> (NĐ 168/2025, Điều 87) nếu đáp ứng điều kiện và có giấy phép — trừ ngành yêu cầu tư cách pháp nhân (ngân hàng, bảo hiểm, kiểm toán…).</li>
+    <li><b>Thương mại điện tử</b> (website bán hàng): cần thông báo với Bộ Công Thương (NĐ 52/2013 sửa đổi).</li>
+  </ul>
+</section>
+
+<section id="s6">
+  <div class="kicker">Điểm mới</div>
+  <h2>Những thay đổi 2026 so với trước</h2>
+  <table>
+    <tr class="hl"><td><b>Bãi bỏ lệ phí môn bài</b></td><td>Không nộp 300–500k/năm từ 1/1/2026</td><td>Giảm ngay chi phí tuân thủ hàng năm</td></tr>
+    <tr class="hl"><td><b>Ngưỡng miễn thuế lên 1 tỷ</b></td><td>NĐ 141/2026/NĐ-CP: HKD ≤ 1 tỷ miễn GTGT+TNCN (nhưng phải thông báo DT)</td><td>Đa số HKD nhỏ không phải nộp thuế</td></tr>
+    <tr><td><b>Phân nhóm quản lý thuế</b></td><td>NĐ 68/2026/NĐ-CP chia 3 nhóm theo doanh thu</td><td>Bỏ cơ chế "khoán" thuần túy</td></tr>
+    <tr><td><b>Đăng ký online qua VNeID</b></td><td>hokinhdoanh.dkkd.gov.vn bắt buộc VNeID, không cần công chứng</td><td>Tiện lợi cho dev/nhà từ xa</td></tr>
+  </table>
+</section>
+
+<section id="s7">
+  <div class="kicker">So sánh</div>
+  <h2>Chi phí &amp; mức độ phức tạp: HKD vs TNHH MTV</h2>
+  <div class="compare">
+    <div class="col">
+      <h4>🏪 Hộ kinh doanh</h4>
+      <div class="price">~50.000đ + ~300k/tháng</div>
+      <ul>
+        <li>Lệ phí thành lập 50.000đ</li>
+        <li>Lệ phí môn bài: 0đ (bãi bỏ)</li>
+        <li>Thuế: miễn (≤ 1 tỷ) hoặc tỷ lệ 2–10% trên DT</li>
+        <li>Kế toán thuê ngoài: 200–500k/tháng</li>
+        <li>Không bắt buộc báo cáo tài chính năm</li>
+        <li><b>Trách nhiệm vô hạn</b></li>
+        <li>Lao động ≤ 10 người</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>🏢 TNHH 1 thành viên</h4>
+      <div class="price">~600k–2tr + ~1–3tr/tháng</div>
+      <ul>
+        <li>Lệ phí thành lập ~50.000đ (+ DV 500k–2tr)</li>
+        <li>Không môn bài (bãi bỏ chung)</li>
+        <li>Thuế TNDN 20% trên lợi nhuận</li>
+        <li>Kế toán + thuế: 1–3 triệu/tháng</li>
+        <li>Bắt buộc BCTC năm + quyết toán</li>
+        <li><b>Trách nhiệm hữu hạn</b></li>
+        <li>Lao động không giới hạn</li>
+      </ul>
+    </div>
+    <div class="col" style="background:var(--clay-soft);border-color:var(--clay);">
+      <h4>Khuyến nghị</h4>
+      <div class="price" style="color:var(--ink)">Chọn theo quy mô &amp; nhu cầu</div>
+      <ul>
+        <li><b>HKD</b> nếu: thu nhập &lt; 1 tỷ, không hoặc ít giao dịch B2B, muốn tối giản thủ tục.</li>
+        <li><b>TNHH</b> nếu: doanh thu vài tỷ, cần khấu trừ chi phí, giao dịch với doanh nghiệp lớn, cần tách trách nhiệm tài sản, hoặc thuê &gt; 10 người.</li>
+        <li><b>Lưu ý:</b> hộ KD không có tư cách pháp nhân — nếu làm app gọi vốn/đấu thầu xuất khẩu, TNHH lợi hơn dù tốn kém hơn.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Tiếp theo:</b> <a href="02-thue-hkd-2026.html">02 — Thuế hộ kinh doanh 2026</a> (ngưỡng 1 tỷ, tỷ lệ cụ thể, kê khai, lịch năm, sai lầm).</p>
+  <p style="margin-top:6px">⚠️ Miễn trừ: Thông tin tham khảo. Kiểm tra văn bản gốc và hỏi cơ quan thuế/đại lý thuế trước khi quyết định. Mốc dữ liệu 19/10/2026.</p>
+</footer>
+</div>
+
+<button id="theme" type="button" aria-label="Giao diện">☾</button>
+<script>
+var btn=document.getElementById("theme");
+function sync(){btn.textContent=document.documentElement.classList.contains("dark")?"☀":"☾";}
+btn.addEventListener("click",function(){
+  var w=!document.documentElement.classList.contains("dark");
+  document.documentElement.classList.toggle("dark",w);
+  try{localStorage.setItem("theme",w?"dark":"light");}catch(e){}
+  sync();
+});
+sync();
+</script>
+</body>
+</html>

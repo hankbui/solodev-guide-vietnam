@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App Store từng bước cho solo developer · VN</title>
+<script>
+  (function () {
+    var q = location.search.indexOf("theme=dark") !== -1;
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches))) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
+<style>
+  :root {
+    --bg: #FAF9F5;
+    --ink: #141413;
+    --card: #FFFFFF;
+    --line: #D1CFC5;
+    --line-soft: #E7E4DA;
+    --mut: #87867F;
+    --mut2: #3D3D3A;
+    --clay: #D97757;
+    --olive: #6B7F51;
+    --rust: #B04A3F;
+    --oat: #F0EEE6;
+    --ok-soft: rgba(107,127,81,.12);
+    --bad-soft: rgba(176,74,63,.10);
+    --clay-soft: rgba(217,119,87,.14);
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html.dark {
+    --bg: #121110;
+    --ink: #EDEAE3;
+    --card: #1B1A17;
+    --line: #3A3831;
+    --line-soft: #2B2924;
+    --mut: #9A988F;
+    --mut2: #C9C7BD;
+    --oat: #1E1D1A;
+    --clay: #E08A6B;
+    --olive: #8FA269;
+    --rust: #CF6A5C;
+    --ok-soft: rgba(143,162,105,.14);
+    --bad-soft: rgba(207,106,92,.14);
+    --clay-soft: rgba(224,138,107,.16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 22px 96px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .sheet { max-width: 1040px; margin: 0 auto; }
+
+  header { margin-bottom: 34px; max-width: 780px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--mut); margin-bottom: 12px;
+  }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 33px; letter-spacing: -.01em; line-height: 1.15; margin-bottom: 12px; }
+  h1 code, p code, li code, td code { font-family: var(--mono); font-size: .86em; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; }
+  .lead { font-size: 14.5px; line-height: 1.62; color: var(--mut2); max-width: 640px; }
+
+  .note { margin: 18px 0; padding: 12px 16px; border: 1.5px solid var(--line); border-left: 4px solid var(--clay); border-radius: 10px; background: var(--card); font-size: 13.5px; line-height: 1.6; color: var(--mut2); }
+  .note b { color: var(--ink); }
+
+  /* ── TOC ───────────────────────────── */
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 30px; }
+  .toc a {
+    font-family: var(--mono); font-size: 12px; color: var(--mut2);
+    text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; background: var(--card); transition: border-color .15s, color .15s;
+  }
+  .toc a:hover { border-color: var(--clay); color: var(--ink); }
+
+  /* ── layout ────────────────────────── */
+  .layout { display: grid; grid-template-columns: 460px minmax(0,1fr); gap: 28px; align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .canvas {
+    border: 1.5px solid var(--line); border-radius: 14px; background: var(--card);
+    padding: 22px; overflow-x: auto;
+  }
+  svg.flow { display: block; width: 100%; height: auto; }
+  .flow text { font-family: var(--mono); font-size: 12px; fill: var(--ink); pointer-events: none; }
+  .flow .sub { font-size: 9.5px; fill: var(--mut); }
+  .flow .lbl { font-size: 9.5px; fill: var(--mut); }
+  .flow .num { font-size: 13px; font-weight: 700; fill: var(--clay); }
+  .node rect, .node path { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+  .node rect.rx { rx: 8; }
+  .node.term rect { fill: var(--oat); rx: 22; }
+  .node.ok rect { fill: var(--ok-soft); stroke: var(--olive); }
+  .node.bad rect { fill: var(--bad-soft); stroke: var(--rust); }
+  .node.gate path { rx: 6; }
+  .edge { stroke: var(--mut); stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  .edge.yes { stroke: var(--olive); marker-end: url(#arrow-olive); }
+  .edge.no { stroke: var(--rust); stroke-dasharray: 4 4; marker-end: url(#arrow-rust); }
+
+  .node { cursor: pointer; transition: transform 120ms ease; }
+  .node:not(.term):hover { transform: translateY(-1px); }
+  .node.active rect, .node.active path { stroke: var(--clay); stroke-width: 2.2; }
+
+  aside {
+    position: sticky; top: 22px; border: 1.5px solid var(--line); border-radius: 14px;
+    background: var(--card); padding: 20px 20px 22px;
+  }
+  aside .hint { font-size: 12px; color: var(--mut); margin-bottom: 12px; font-family: var(--mono); }
+  aside h3 { font-family: var(--serif); font-weight: 500; font-size: 19px; margin-bottom: 5px; }
+  aside .meta { font-family: var(--mono); font-size: 11px; color: var(--mut); margin-bottom: 12px; }
+  aside p { font-size: 13.5px; line-height: 1.62; color: var(--mut2); }
+  aside p + p { margin-top: 10px; }
+  aside pre { font-family: var(--mono); font-size: 11px; line-height: 1.55; background: var(--oat); border: 1px solid var(--line-soft); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; color: var(--ink); margin-top: 12px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--mut2); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .chip { width: 20px; height: 13px; border: 1.5px solid var(--line); border-radius: 4px; background: var(--card); }
+  .chip.gate { width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; }
+  .chip.ok { background: var(--ok-soft); border-color: var(--olive); }
+  .chip.bad { background: var(--bad-soft); border-color: var(--rust); }
+
+  /* ── sections ──────────────────────── */
+  section { margin-top: 46px; }
+  section h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; letter-spacing: -.01em; margin-bottom: 6px; }
+  section h2 .step { color: var(--clay); }
+  .kicker { font-family: var(--mono); font-size: 11px; color: var(--clay); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  section p, section li { font-size: 14.5px; line-height: 1.66; color: var(--mut2); }
+  section p { margin-top: 12px; }
+  ul { margin: 12px 0 0 20px; }
+  li { margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th { font-family: var(--serif); font-weight: 500; color: var(--ink); font-size: 14px; border-bottom: 1.5px solid var(--line); }
+  td { color: var(--mut2); line-height: 1.5; }
+  tr.hl td { background: var(--ok-soft); }
+  tr.hl-bad td { background: var(--bad-soft); }
+
+  .callout { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: var(--clay-soft); border: 1.5px solid var(--clay); }
+  .callout b { font-family: var(--serif); font-size: 16px; }
+  .callout p { color: var(--ink); }
+
+  footer { margin-top: 60px; padding-top: 22px; border-top: 1.5px solid var(--line); }
+  footer p, footer li { font-size: 13px; line-height: 1.6; color: var(--mut); }
+  footer a { color: var(--clay); text-decoration: none; }
+
+  /* ── theme toggle ──────────────────── */
+  #theme {
+    position: fixed; top: 16px; right: 18px; z-index: 50;
+    border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; width: 36px; height: 36px; cursor: pointer;
+    font-size: 16px; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  #theme:hover { border-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">Solo Developer Guide · Việt Nam · mốc 19/10/2026</div>
+    <h1>App Store từng bước: từ ý tưởng đến <em>tiền về tay</em></h1>
+    <p class="lead">
+      Quy trình trọn vẹn cho một developer cá nhân (<em>indie dev</em>) tại Việt Nam: đăng ký tài khoản,
+      khai thuế &amp; ngân hàng với Apple, build, duyệt, phát hành, rồi nhận tiền. Kèm sơ đồ dòng tiền xem
+      thực tế bạn giữ được bao nhiêu phần trăm. Bấm vào từng bước trong sơ đồ để xem chi tiết.
+    </p>
+    <div class="toc">
+      <a href="#s0">🔄 Dòng chảy 6 bước</a>
+      <a href="#s1">1 · Đăng ký Apple Developer</a>
+      <a href="#s2">2 · Thuế Mỹ + ngân hàng</a>
+      <a href="#s3">3 · Build &amp; privacy</a>
+      <a href="#s4">4 · App Review</a>
+      <a href="#s5">5 · Phát hành</a>
+      <a href="#s6">6 · Nhận tiền + phí</a>
+      <a href="#src">Nguồn</a>
+    </div>
+    <div class="note">
+      <b>Đọc trước:</b> đây là thông tin tham khảo, không phải tư vấn pháp lý/thuế. Tỷ lệ hoa hồng, chu kỳ
+      thanh toán và thuế khấu trừ của Apple <b>thay đổi theo thời gian</b> — xác nhận trên App Store Connect
+      (mục <code>Payments &amp; Financial Reports</code>) và hợp đồng hiện hành trước khi quyết định.
+    </div>
+  </header>
+
+  <section id="s0">
+    <div class="kicker">Tổng quan</div>
+    <h2>Dòng chảy 6 bước <span style="color:var(--mut);font-size:15px;">(bấm từng bước → xem chi tiết bên phải)</span></h2>
+    <div class="layout">
+      <div>
+        <div class="canvas">
+          <svg class="flow" viewBox="0 0 620 800">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/>
+              </marker>
+              <marker id="arrow-rust" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="var(--rust)"/>
+              </marker>
+              <marker id="arrow-olive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="var(--olive)"/>
+              </marker>
+            </defs>
+
+            <g class="node term" data-k="start">
+              <rect x="230" y="10" width="160" height="42"/>
+              <text x="310" y="36" text-anchor="middle">Ý tưởng + Apple ID sẵn sàng</text>
+            </g>
+
+            <g class="node nosub" data-k="s1">
+              <rect class="rx" x="200" y="74" width="220" height="52"/>
+              <text x="310" y="94" text-anchor="middle"><tspan class="num">1</tspan>  Đăng ký Apple Developer</text>
+              <text class="sub" x="310" y="112" text-anchor="middle">$99/năm · Individual · 2FA</text>
+            </g>
+
+            <g class="node nosub" data-k="s2">
+              <rect class="rx" x="200" y="148" width="220" height="52"/>
+              <text x="310" y="168" text-anchor="middle"><tspan class="num">2</tspan>  Khai thuế Mỹ + ngân hàng</text>
+              <text class="sub" x="310" y="186" text-anchor="middle">W-8BEN · tài khoản SWIFT</text>
+            </g>
+
+            <g class="node nosub" data-k="s3">
+              <rect class="rx" x="200" y="222" width="220" height="52"/>
+              <text x="310" y="242" text-anchor="middle"><tspan class="num">3</tspan>  Build + TestFlight</text>
+              <text class="sub" x="310" y="260" text-anchor="middle">Xcode · privacy labels</text>
+            </g>
+
+            <g class="node gate" data-k="g1">
+              <path d="M310,300 L354,332 L310,364 L266,332 Z"/>
+              <text x="310" y="336" text-anchor="middle">Đủ thông tin?</text>
+            </g>
+            <path class="edge no" d="M266,332 C150,332 150,316 150,288 L150,288"/>
+            <text class="lbl" x="40" y="266" fill="var(--rust)">thiếu metadata / demo account</text>
+            <g class="node bad nosub" data-k="fix1">
+              <rect class="rx" x="40" y="276" width="186" height="46"/>
+              <text x="133" y="303" text-anchor="middle">Sửa thông tin app</text>
+            </g>
+
+            <g class="node nosub" data-k="s4">
+              <rect class="rx" x="200" y="386" width="220" height="52"/>
+              <text x="310" y="406" text-anchor="middle"><tspan class="num">4</tspan>  App Review</text>
+              <text class="sub" x="310" y="424" text-anchor="middle">24–48h · review guidelines</text>
+            </g>
+
+            <g class="node gate" data-k="g2">
+              <path d="M310,464 L354,496 L310,528 L266,496 Z"/>
+              <text x="310" y="500" text-anchor="middle">Passed?</text>
+            </g>
+            <path class="edge no" d="M354,496 C470,496 470,472 470,444 L470,444"/>
+            <text class="lbl" x="392" y="470" fill="var(--rust)">app bị từ chối (thường 2.1 …)</text>
+            <g class="node bad nosub" data-k="fix2">
+              <rect class="rx" x="392" y="408" width="188" height="46"/>
+              <text x="486" y="435" text-anchor="middle">Sửa lỗi + gửi lại</text>
+            </g>
+
+            <g class="node nosub" data-k="s5">
+              <rect class="rx" x="200" y="550" width="220" height="52"/>
+              <text x="310" y="570" text-anchor="middle"><tspan class="num">5</tspan>  Phát hành</text>
+              <text class="sub" x="310" y="588" text-anchor="middle">Release / Phased / Scheduled</text>
+            </g>
+
+            <g class="node nosub" data-k="s6">
+              <rect class="rx" x="200" y="624" width="220" height="52"/>
+              <text x="310" y="644" text-anchor="middle"><tspan class="num">6</tspan>  Nhận tiền hằng tháng</text>
+              <text class="sub" x="310" y="662" text-anchor="middle">~30–45 ngày sau cuối tháng · USD</text>
+            </g>
+
+            <g class="node ok term" data-k="done">
+              <rect x="215" y="698" width="190" height="48"/>
+              <text x="310" y="718" text-anchor="middle">Tiền về tài khoản VN</text>
+              <text class="sub" x="310" y="734" text-anchor="middle">đối chiếu → kê khai thuế VN → doc 02</text>
+            </g>
+
+            <path class="edge" d="M310,52 L310,74"/>
+            <path class="edge" d="M310,126 L310,148"/>
+            <path class="edge" d="M310,200 L310,222"/>
+            <path class="edge" d="M310,274 L310,300"/>
+            <path class="edge yes" d="M310,364 L310,386"/>
+            <path class="edge yes" d="M310,438 L310,464"/>
+            <path class="edge yes" d="M310,528 L310,550"/>
+            <path class="edge" d="M310,602 L310,624"/>
+            <path class="edge" d="M310,676 L310,698"/>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><i class="chip"></i> bước thực hiện</span>
+          <span><i class="chip gate"></i> điểm quyết định</span>
+          <span><i class="chip ok"></i> hoàn thành</span>
+          <span><i class="chip bad"></i> nhánh lỗi / chỉnh sửa</span>
+        </div>
+      </div>
+
+      <aside data-panel>
+        <div class="hint">Bấm một bước trong sơ đồ →</div>
+        <h3 data-t>Ý tưởng + Apple ID sẵn sàng</h3>
+        <div class="meta" data-m>điểm bắt đầu · 0đ</div>
+        <p data-b>Bạn cần một Apple ID (tạo miễn phí) và thẻ thanh toán quốc tế để trả phí chương trình. Chưa cần mã số thuế VN ở bước này.</p>
+        <pre data-c>appleid.apple.com  →  tạo Apple ID
+developer.apple.com  →  Join Program</pre>
+      </aside>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="kicker">Bước 1</div>
+    <h2>Đăng ký Apple Developer Program</h2>
+    <ul>
+      <li>Chọn <b>Individual</b> — phí <b>$99/năm</b>, gia hạn tự động. <b>Không cần mã DUNS</b> (DUNS dành cho tổ chức/Enterprise).</li>
+      <li>Apple ID cần bật <b>2FA</b>. Xác minh danh tính cơ bản: không yêu cầu hộ chiếu.</li>
+      <li>Số MST cá nhân VN <b>không được yêu cầu</b> khi đăng ký — nhưng bạn sẽ cần MST VN cho W-8BEN và nghĩa vụ thuế trong nước.</li>
+    </ul>
+  </section>
+
+  <section id="s2">
+    <div class="kicker">Bước 2 · App Store Connect</div>
+    <h2>Khai thuế Mỹ + ngân hàng — quan trọng nhất, làm trước khi nhận tiền</h2>
+    <table>
+      <tr><th>Hạng mục</th><th>Viec phải làm</th><th>Nếu bỏ qua</th></tr>
+      <tr class="hl">
+        <td><b>Tax — <code>W-8BEN</code></b></td>
+        <td>Cá nhân ngoài Mỹ <b>bắt buộc khai</b> Mẫu W-8BEN của IRS trong mục <code>Agreements, Tax, and Banking</code></td>
+        <td>Apple khấu trừ <b>~30% tổng doanh thu</b> theo luật Mỹ; khoản này <b>không được hoàn</b> cho dev VN (VN không có hiệp định thuế với Mỹ)</td>
+      </tr>
+      <tr>
+        <td><b>Banking</b></td>
+        <td>Thêm tài khoản ngân hàng nhận tiền qua <b>SWIFT/BIC</b>; tài khoản đứng tên cá nhân, khớp tên tài khoản Apple</td>
+        <td>Không có tài khoản → không nhận được tiền</td>
+      </tr>
+      <tr>
+        <td><b>Currency</b></td>
+        <td>Apple trả bằng <b>USD</b>; ngân hàng VN quy đổi theo tỷ giá</td>
+        <td>Phí SWIFT/ngân hàng trung gian thường <b>$10–25/lần</b> + spread tỷ giá</td>
+      </tr>
+      <tr>
+        <td><b>Payout tối thiểu</b></td>
+        <td>Doanh thu nhỏ bị cộng dồn tới khi đủ ngưỡng (~$10–25 tùy thời điểm)</td>
+        <td>Thanh toán bị chuyển dời sang các kỳ sau</td>
+      </tr>
+    </table>
+    <div class="note"><b>Thuế Mỹ ≠ thuế Việt Nam.</b> Khoản khấu trừ ~30% (nếu W-8BEN chưa khai hiệu quả) là thuế của Mỹ, mất vĩnh viễn. Dùng mã số thuế nước ngoài hợp lệ khi khai W-8BEN để giảm thiểu/minh bạch khoản này. Thuế VN tính <b>riêng</b>, bạn tự kê khai (xem tài liệu 02).</div>
+  </section>
+
+  <section id="s3">
+    <div class="kicker">Bước 3</div>
+    <h2>Build, TestFlight &amp; privacy</h2>
+    <ul>
+      <li><b>Xcode</b> (miễn phí) — code signing + provisioning tự xử lý qua App Store Connect.</li>
+      <li><b>TestFlight</b> dành cho beta test nội bộ, không dùng phân phối thương mại.</li>
+      <li><b>Privacy Nutrition Labels</b> — bắt buộc: khai data collection, sharing, security practices trong <code>App Privacy</code>.</li>
+      <li><b>App Review Notes</b> — cung cấp tài khoản demo + hướng dẫn reviewer nếu app cần đăng nhập.</li>
+      <li>Có thể dùng <b>App Store Connect API</b> để tự động hoá submit, kiểm tra status.</li>
+    </ul>
+  </section>
+
+  <section id="s4">
+    <div class="kicker">Bước 4</div>
+    <h2>App Review — thời gian &amp; những lý do hay bị từ chối</h2>
+    <ul>
+      <li>Thời gian: <b>~50% bài duyệt &lt; 24h, ~90% &lt; 48h</b> (2026). App mới thường lâu hơn update hơn.</li>
+      <li><b>Expedited review</b> nếu có lý do chính đáng (critical bug, sự kiện gắn với app).</li>
+    </ul>
+    <table>
+      <tr><th>#</th><th>Guideline</th><th>Lý do</th></tr>
+      <tr class="hl"><td>1</td><td><b>2.1 App Completeness</b></td><td>Crash, placeholder, link hỏng, thiếu demo account, metadata thiếu — <b>chiếm &gt; 40%</b> ca từ chối</td></tr>
+      <tr><td>2</td><td><b>3.x Business</b></td><td>IAP không dùng Apple IAP, sai business model</td></tr>
+      <tr><td>3</td><td><b>4.1 / 4.2 / 4.3</b></td><td>Copycat, quá ít chức năng, spam</td></tr>
+      <tr><td>4</td><td><b>2.3 Metadata</b></td><td>Screenshot/description mô tả sai</td></tr>
+      <tr><td>5</td><td><b>5.1 Privacy</b></td><td>Thiếu privacy policy, khai data access không rõ</td></tr>
+    </table>
+  </section>
+
+  <section id="s5">
+    <div class="kicker">Bước 5</div>
+    <h2>Phát hành</h2>
+    <ul>
+      <li><b>Release This Version</b> — hiện trên store trong ~24h.</li>
+      <li><b>Phased Release</b> — tăng dần % người dùng để quan sát phản hồi.</li>
+      <li><b>Scheduled Release</b> — hẹn ngày giờ; <b>Pre-order</b> — niêm yết trước.</li>
+      <li>Theo dõi doanh số bằng <b>App Analytics</b> (sales, subscriptions, installations).</li>
+    </ul>
+  </section>
+
+  <section id="s6">
+    <div class="kicker">Bước 6</div>
+    <h2>Nhận tiền, hoa hồng &amp; sơ đồ dòng tiền</h2>
+    <p><b>Chu kỳ:</b> Apple thanh toán <b>mỗi tháng một lần</b>, ~<b>30–45 ngày sau khi kết thúc tháng phát sinh doanh thu</b>.</p>
+
+    <h2 style="font-size:18px;margin-top:22px;">Hoa hồng Apple đánh trước khi bạn thấy tiền</h2>
+    <table>
+      <tr><th>Program</th><th>Hoa hồng</th><th>Điều kiện</th></tr>
+      <tr class="hl"><td><b>Small Business Program</b></td><td><b>15%</b></td><td>Tổng proceeds ≤ $1M/năm cho tất cả app gộp; dev mới enroll được luôn</td></tr>
+      <tr><td><b>Standard</b></td><td><b>30%</b></td><td>Mặc định</td></tr>
+    </table>
+
+    <div class="canvas" style="margin-top:22px;">
+      <div class="kicker">Sơ đồ dòng tiền · ví dụ app $10 × 1.000 bản = $10.000</div>
+      <svg class="flow" viewBox="0 0 620 320">
+        <defs>
+          <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/>
+          </marker>
+        </defs>
+
+        <text x="40" y="34" font-size="13" fill="var(--mut)" font-family="monospace">DOANH THU NGƯỜI DÙNG TRẢ — 100%</text>
+        <rect x="40" y="44" width="540" height="66" rx="6" fill="var(--ok-soft)" stroke="var(--line)" stroke-width="1.5"/>
+        <text x="310" y="88" text-anchor="middle" font-size="13" fill="var(--ink)" font-family="monospace">$10.000 — 100%</text>
+
+        <text x="40" y="154" font-size="13" fill="var(--mut)" font-family="monospace">SAU HOA HỒNG APPLE + THUẾ MỸ + PHÍ NGÂN HÀNG</text>
+
+        <rect x="40" y="166" width="540" height="66" fill="var(--card)" stroke="var(--line)" stroke-width="1.5" rx="6"/>
+        <rect x="41" y="167" width="81" height="64" fill="var(--rust)" opacity=".85" rx="5"/>
+        <text x="81" y="205" text-anchor="middle" font-size="11" fill="#fff" font-family="monospace">15%</text>
+        <rect x="122" y="167" width="138" height="64" fill="var(--clay)" opacity=".9" rx="5"/>
+        <text x="191" y="205" text-anchor="middle" font-size="11" fill="#fff" font-family="monospace">~25,5%</text>
+        <rect x="260" y="167" width="6" height="64" fill="var(--mut)" rx="3"/>
+        <rect x="267" y="167" width="315" height="64" fill="var(--olive)" opacity=".9" rx="5"/>
+        <text x="423" y="205" text-anchor="middle" font-size="13" font-family="monospace" fill="#fff">≈ $5.930 — THỰC NHẬN</text>
+
+        <g font-size="11.5" fill="var(--mut2)" font-family="monospace">
+          <text x="40" y="258">Apple 15% (SBP)  ≈ $1.500</text>
+          <text x="230" y="258">Thuế Mỹ ~30%     ≈ $2.550</text>
+          <text x="430" y="258">Phí NH $10–25</text>
+        </g>
+        <text x="40" y="288" font-size="11.5" fill="var(--clay)" font-family="monospace" font-weight="bold">Chưa enroll SBP (hoa hồng 30%) → thực nhận chỉ ≈ 49%. Enroll Small Business Program ngay khi đủ điều kiện.</text>
+      </svg>
+    </div>
+
+    <div class="callout">
+      <b>Quy tắc 60/40 của indie dev</b>
+      <p>Bạn thực nhận trong tay ≈ <b>45–60%</b> doanh thu người dùng trả, sau: hoa hồng Apple (15–30%) → thuế Mỹ (~30% nếu W-8BEN chưa hiệu quả) → phí ngân hàng. <b>Chưa kể thuế Việt Nam</b> (tài liệu 02). Khi đặt giá app, hãy tính ngược từ con số bạn muốn thực nhận.</p>
+    </div>
+  </section>
+
+  <section id="src">
+    <h2>Nguồn</h2>
+    <ul>
+      <li><a href="https://developer.apple.com/programs/">Apple Developer Program</a> · <a href="https://developer.apple.com/app-store/small-business-program/">Small Business Program</a></li>
+      <li><a href="https://developer.apple.com/app-store/review/guidelines/">App Review Guidelines</a> · <a href="https://developer.apple.com/distribute/app-review/">App Review — process &amp; common issues</a></li>
+      <li><a href="https://www.irs.gov/forms-pubs/about-form-w-8-ben">IRS — About Form W-8 BEN</a> · <a href="https://developer.apple.com/app-store/get-started/">App Store Get Started</a></li>
+    </ul>
+    <p>Chu kỳ thanh toán, ngưỡng payout tối thiểu và mức khấu trừ thuế Mỹ thay đổi theo thời gian — xác nhận trên App Store Connect và hợp đồng hiện hành.</p>
+  </section>
+
+  <footer>
+    <p><b>Tiếp theo:</b> <a href="02-thue-va-thu-tuc.html">02 — Thuế Việt Nam, thủ tục và checklist</a> (ngưỡng miễn thuế, kê khai, ngân hàng, ngoại tệ, sai lầm thường gặp).</p>
+    <p style="margin-top:8px">⚠️ Miễn trừ trách nhiệm: Thông tin tham khảo, không phải tư vấn pháp lý/thuế. Mốc dữ liệu 19/10/2026. Kiểm tra văn bản gốc và hỏi cơ quan thuế/đại lý thuế trước khi quyết định.</p>
+  </footer>
+</div>
+
+<button id="theme" type="button" aria-label="Bật/tắt giao diện" title="Giao diện sáng/tối">☾</button>
+
+<script>
+  var btn = document.getElementById("theme");
+  function sync() {
+    btn.textContent = document.documentElement.classList.contains("dark") ? "☀" : "☾";
+  }
+  btn.addEventListener("click", function () {
+    var want = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", want);
+    try { localStorage.setItem("theme", want ? "dark" : "light"); } catch (e) {}
+    sync();
+  });
+  sync();
+
+  var DETAIL = {
+    start: { t: "Ý tưởng + Apple ID sẵn sàng", m: "điểm bắt đầu · 0đ",
+      b: "Bạn cần một Apple ID (miễn phí) và thẻ thanh toán quốc tế để trả phí chương trình. Chưa cần mã số thuế VN ở bước này.",
+      c: "appleid.apple.com  →  tạo Apple ID\ndeveloper.apple.com  →  Join Program" },
+    s1: { t: "Đăng ký Apple Developer", m: "Bước 1 · $99/năm",
+      b: "Chọn tài khoản Individual. Không cần mã DUNS. Bật đăng nhập 2 yếu tố cho Apple ID. Thẻ Visa/Mastercard quốc tế để đóng phí.",
+      c: "nhiều năm:\nProgram: Individual\nFee: $99/năm" },
+    s2: { t: "Khai thuế Mỹ + ngân hàng", m: "Bước 2 · làm một lần, quan trọng nhất",
+      b: "Mục Agreements, Tax, and Banking. Khai W-8BEN (IRS) để giảm khấu trừ thuế Mỹ. Thêm tài khoản nhận tiền SWIFT đứng tên bạn.",
+      c: "W-8BEN:\n  loại: cá nhân ngoài Mỹ\n  MST nước ngoài: ghi MST VN\nBanking: SWIFT/BIC + IBAN" },
+    s3: { t: "Build + TestFlight", m: "Bước 3 · Xcode",
+      b: "Build với Xcode; ký số tự động qua App Store Connect. TestFlight để beta. Khai báo App Privacy & bản quyền — nhãn này hiển thị trên trang sản phẩm.",
+      c: "xcodebuild ...\nApp Privacy → data collection\nReview Notes → tài khoản demo" },
+    g1: { t: "Thông tin app đầy đủ?", m: "cổng kiểm tra",
+      b: "Metadata (tên, mô tả, screenshot), tài khoản demo, privacy policy, App Privacy. Thiếu → không nên gửi, sẽ bị từ chối 2.1.",
+      c: "kiểm tra:\n  metadata đủ?\n  demo account?\n  privacy policy?" },
+    fix1: { t: "Sửa thông tin app", m: "chỉnh sửa metadata",
+      b: "Bổ sung mô tả, screenshot đúng, tài khoản demo, privacy policy rồi gửi lại. Tiết kiệm 24–48h chu kỳ review.",
+      c: "App Store Connect →\n  App Information → sửa" },
+    s4: { t: "App Review", m: "Bước 4 · 24–48h",
+      b: "Nhóm reviewer kiểm tra theo App Review Guidelines. Khoảng 50% bài duyệt trong 24h, 90% trong 48h. App mới thường lâu hơn.",
+      c: "trạng thái:\n  In Review\n  Approved / Rejected" },
+    g2: { t: "Bị từ chối?", m: "cổng quyết định",
+      b: "Lý do từ chối phổ biến: 2.1 App Completeness (>40% ca), 3.x business, 4.x copycat/spam, 2.3 metadata, 5.1 privacy. Sửa lỗi cụ thể và gửi lại.",
+      c: "resolution center:\n  đọc tin nhắn reviewer\n  sửa → resubmit" },
+    fix2: { t: "Sửa lỗi + gửi lại", m: "vòng lặp review",
+      b: "Hầu hết từ chối có thể sửa được trong 1–2 vòng. Giữ văn hoá: dịch chính xác yêu cầu của reviewer, không cãi khi chưa hiểu rõ.",
+      c: "fix 2.1:\n  fix crash\n  điền metadata\n  thử lại trên device" },
+    s5: { t: "Phát hành", m: "Bước 5 · release",
+      b: "Chọn Release This Version (hiện store ~24h), Phased Release (tăng dần %), Scheduled Release, hoặc Pre-order. Theo dõi bằng App Analytics.",
+      c: "Release This Version\nhoặc Phased Release 1% → 100%" },
+    s6: { t: "Nhận tiền hằng tháng", m: "Bước 6 · thanh toán",
+      b: "Apple trả mỗi tháng một lần, 30–45 ngày sau cuối tháng phát sinh doanh thu, bằng USD chuyển qua SWIFT về tài khoản VN. Doanh thu nhỏ bị cộng dồn",
+      c: "Payments & Financial Reports:\n  có số dư đủ ngưỡng?\n  → kỳ thanh toán tiếp theo" },
+    done: { t: "Tiền về tài khoản VN", m: "hoàn thành chu kỳ · tiếp theo: thuế VN",
+      b: "Đối chiếu từng kỳ báo cáo của Apple với sao kê ngân hàng, lưu phiếu báo có kèm tỷ giá. Đây là chứng từ cho việc kê khai thuế tại Việt Nam.",
+      c: "sao kê NH ↔ Financial Report\nlưu tỷ giá từng lần nhận\n→ mở tài liệu 02" }
+  };
+  var nodes = document.querySelectorAll(".node");
+  var panel = document.querySelector("aside[data-panel]");
+  var T = panel.querySelector("[data-t]"), M = panel.querySelector("[data-m]"),
+      B = panel.querySelector("[data-b]"), C = panel.querySelector("[data-c]");
+  nodes.forEach(function (n) {
+    n.addEventListener("click", function () {
+      nodes.forEach(function (x) { x.classList.remove("active"); });
+      n.classList.add("active");
+      var d = DETAIL[n.dataset.k]; if (!d) return;
+      T.textContent = d.t; M.textContent = d.m; B.textContent = d.b; C.textContent = d.c;
+    });
+  });
+  document.querySelector('.node[data-k="start"]').classList.add("active");
+</script>
+</body>
+</html>

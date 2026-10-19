@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quy trình kê khai thuế HKD · VN 2026</title>
+<script>
+(function () {
+  var q = location.search.indexOf("theme=dark") !== -1;
+  var t = null;
+  try { t = localStorage.getItem("theme"); } catch (e) {}
+  if (q ? true : (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches)))
+    document.documentElement.classList.add("dark");
+})();
+</script>
+<style>
+  :root {
+    --bg:#FAF9F5; --ink:#141413; --card:#FFF; --line:#D1CFC5; --line-soft:#E7E4DA;
+    --mut:#87867F; --mut2:#3D3D3A;
+    --clay:#D97757; --olive:#6B7F51; --rust:#B04A3F;
+    --ok-soft:rgba(107,127,81,.12); --bad-soft:rgba(176,74,63,.10); --clay-soft:rgba(217,119,87,.14);
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  html.dark {
+    --bg:#121110; --ink:#EDEAE3; --card:#1B1A17; --line:#3A3831; --line-soft:#2B2924;
+    --mut:#9A988F; --mut2:#C9C7BD;
+    --clay:#E08A6B; --olive:#8FA269; --rust:#CF6A5C;
+    --ok-soft:rgba(143,162,105,.14); --bad-soft:rgba(207,106,92,.14); --clay-soft:rgba(224,138,107,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; padding:44px 20px 88px; transition:background .2s,color .2s; }
+  .sheet { max-width:980px; margin:0 auto; }
+
+  header { margin-bottom:30px; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--mut); margin-bottom:10px; }
+  h1 { font-family:var(--serif); font-weight:500; font-size:31px; letter-spacing:-.01em; line-height:1.15; margin-bottom:10px; }
+  .lead { font-size:14px; line-height:1.6; color:var(--mut2); max-width:680px; }
+  code { font-family:var(--mono); font-size:.85em; background:var(--ok-soft); border:1px solid var(--line-soft); border-radius:5px; padding:1px 5px; }
+  .note { margin:16px 0; padding:12px 15px; border:1.5px solid var(--line); border-left:4px solid var(--clay); border-radius:10px; background:var(--card); font-size:13.5px; line-height:1.6; color:var(--mut2); }
+  .note b { color:var(--ink); }
+  .toc { display:flex; flex-wrap:wrap; gap:7px; margin:20px 0 28px; }
+  .toc a { font-family:var(--mono); font-size:12px; color:var(--mut2); text-decoration:none; border:1.5px solid var(--line); border-radius:999px; padding:5px 12px; background:var(--card); }
+  .toc a:hover { border-color:var(--clay); color:var(--ink); }
+
+  .canvas { border:1.5px solid var(--line); border-radius:14px; background:var(--card); padding:20px; overflow-x:auto; }
+  svg.flow { display:block; width:100%; height:auto; }
+  .flow text { font-family:var(--mono); font-size:11.5px; fill:var(--ink); }
+  .flow .sub { font-size:9px; fill:var(--mut); }
+  .flow .num { font-size:13px; font-weight:700; fill:var(--clay); }
+  .node rect, .node path { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+  .node.rx rect { rx:8; }
+  .node.term rect { fill:var(--clay-soft); rx:18; }
+  .node.ok rect { fill:var(--ok-soft); stroke:var(--olive); }
+  .node.bad rect { fill:var(--bad-soft); stroke:var(--rust); }
+  .edge { stroke:var(--mut); stroke-width:1.4; fill:none; marker-end:url(#arrow); }
+  .edge.no { stroke:var(--rust); stroke-dasharray:4 3; marker-end:url(#arrow-rust); }
+  .edge.yes { stroke:var(--olive); marker-end:url(#arrow-olive); }
+  .legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:12px; font-size:11.5px; color:var(--mut2); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .chip { width:18px; height:11px; border:1.5px solid var(--line); border-radius:3px; background:var(--card); }
+  .chip.gate { width:11px; height:11px; transform:rotate(45deg); border-radius:2px; }
+  .chip.ok { background:var(--ok-soft); border-color:var(--olive); }
+
+  section { margin-top:40px; }
+  section h2 { font-family:var(--serif); font-weight:500; font-size:22px; letter-spacing:-.01em; margin-bottom:5px; }
+  .kicker { font-family:var(--mono); font-size:11px; color:var(--clay); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  section p, section li { font-size:14px; line-height:1.66; color:var(--mut2); }
+  section p { margin-top:10px; }
+  ul { margin:10px 0 0 18px; }
+  li { margin-top:5px; }
+
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:12.5px; }
+  th, td { text-align:left; padding:7px 9px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  th { font-family:var(--serif); font-weight:500; color:var(--ink); font-size:13px; border-bottom:1.5px solid var(--line); }
+  td { color:var(--mut2); line-height:1.5; }
+  tr.hl td { background:var(--ok-soft); }
+  tr.hl-bad td { background:var(--bad-soft); }
+
+  .callout { margin:16px 0; padding:12px 16px; border-radius:10px; background:var(--clay-soft); border:1.5px solid var(--clay); }
+  .callout b { font-family:var(--serif); font-size:15px; }
+  .callout p { color:var(--ink); margin-top:4px; }
+
+  .timeline { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+  .q { border:1.5px solid var(--line); border-radius:12px; background:var(--card); padding:12px 14px; }
+  .q h4 { font-family:var(--serif); font-weight:500; font-size:16px; margin-bottom:2px; }
+  .q .mon { font-family:var(--mono); font-size:10.5px; color:var(--clay); margin-bottom:8px; }
+  .q ul { margin:0; }
+  .q li { font-size:12px; line-height:1.5; margin-top:6px; }
+  .q li b { color:var(--ink); }
+  @media (max-width:760px) { .timeline { grid-template-columns:1fr 1fr; } }
+
+  .step-flow { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:14px; }
+  .step-flow .st { border:1.5px solid var(--line); border-radius:8px; background:var(--card); padding:8px; text-align:center; font-size:11px; line-height:1.45; }
+  .step-flow .st b { display:block; font-size:12px; color:var(--ink); }
+  .step-flow .arr { text-align:center; font-size:14px; color:var(--mut); padding:0; }
+  @media (max-width:800px) { .step-flow { grid-template-columns:repeat(3,1fr); } }
+
+  .mistake { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
+  .mistake .card { border:1.5px solid var(--line); border-radius:10px; background:var(--card); padding:10px 12px; }
+  .mistake .card h4 { font-family:var(--serif); font-size:14px; }
+  .mistake .card p { font-size:12px; line-height:1.5; color:var(--mut2); margin-top:4px; }
+  .mistake .card .fix { font-family:var(--mono); font-size:11px; color:var(--clay); margin-top:4px; }
+  @media (max-width:700px) { .mistake { grid-template-columns:1fr; } }
+
+  footer { margin-top:50px; padding-top:18px; border-top:1.5px solid var(--line); }
+  footer p { font-size:12.5px; line-height:1.6; color:var(--mut); }
+  footer a { color:var(--clay); text-decoration:none; }
+
+  #theme { position:fixed; top:14px; right:16px; z-index:50; border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; width:34px; height:34px; cursor:pointer; font-size:15px; }
+  #theme:hover { border-color:var(--clay); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="eyebrow">Kê khai thuế HKD · thực hành 2026</div>
+  <h1>Kê khai thuế hộ kinh doanh từ A đến Z</h1>
+  <p class="lead">Cẩm nang thực hành: từ đăng ký eTax, kê khai mẫu 01/CNKD, nộp tiền thuế, tới thông báo doanh thu ≤ 1 tỷ và quyết toán cuối năm. Kèm lịch, sai lầm & cách xử lý.</p>
+  <div class="toc">
+    <a href="#s0">Sơ đồ luồng</a>
+    <a href="#s1">Chuẩn bị</a>
+    <a href="#s2">Kê khai quý</a>
+    <a href="#s3">Thông báo DT</a>
+    <a href="#s4">HĐĐT</a>
+    <a href="#s5">Sai lầm</a>
+    <a href="#s6">Lịch</a>
+  </div>
+</header>
+
+<section id="s0">
+  <div class="kicker">Tổng quan</div>
+  <h2>Bạn ở luồng nào? — sơ đồ quyết định</h2>
+  <div class="canvas" style="max-width:680px">
+    <svg class="flow" viewBox="0 0 640 420">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/></marker>
+        <marker id="arrow-rust" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--rust)"/></marker>
+        <marker id="arrow-olive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--olive)"/></marker>
+      </defs>
+      <g class="node term"><rect x="200" y="10" width="240" height="38"/><text x="320" y="28" text-anchor="middle">HKD có doanh thu trong kỳ</text><text class="sub" x="320" y="44" text-anchor="middle">(tháng / quý / năm)</text></g>
+      <path class="edge" d="M320,48 L320,84"/>
+      <g class="node gate"><path d="M320,84 L374,126 L320,168 L266,126 Z"/><text x="320" y="130" text-anchor="middle">Doanh thu &gt; 1 tỷ?</text></g>
+
+      <path class="edge no" d="M266,126 C200,126 195,140 190,168 L190,168"/>
+      <text class="lbl" x="108" y="158" fill="var(--rust)">không</text>
+      <g class="node ok"><rect class="rx" x="46" y="172" width="182" height="72"/><text x="137" y="193" text-anchor="middle">THÔNG BÁO DOANH THU</text><text class="sub" x="137" y="209" text-anchor="middle">Mẫu 01/TKN-CNKD</text><text class="sub" x="137" y="224" text-anchor="middle">31/07 &amp; 31/01 · thuế = 0</text><text class="sub" x="137" y="238" text-anchor="middle">không quyết toán cuối năm</text></g>
+
+      <path class="edge yes" d="M320,168 L320,200"/>
+      <text class="lbl" x="330" y="190" fill="var(--olive)">có</text>
+      <g class="node rx"><rect x="228" y="200" width="184" height="62"/><text x="320" y="222" text-anchor="middle">KÊ KHAI THUẾ QUÝ</text><text class="sub" x="320" y="238" text-anchor="middle">Mẫu 01/CNKD trên eTax</text><text class="sub" x="320" y="252" text-anchor="middle">GTGT + TNCN · nộp tiền</text></g>
+
+      <path class="edge" d="M320,262 L320,290"/>
+      <g class="node rx"><rect x="200" y="290" width="240" height="42"/><text x="320" y="310" text-anchor="middle">Nộp thuế + HĐĐT</text><text class="sub" x="320" y="326" text-anchor="middle">HĐĐT bắt buộc khi &gt; 1 tỷ</text></g>
+      <path class="edge" d="M320,332 L320,360"/>
+      <g class="node ok term"><rect x="214" y="360" width="212" height="46"/><text x="320" y="380" text-anchor="middle">Quyết toán TNCN năm</text><text class="sub" x="320" y="396" text-anchor="middle">hạn 30/04 · mẫu 02/CNKD</text></g>
+    </svg>
+    <div class="legend">
+      <span><i class="chip"></i> nghĩa vụ</span>
+      <span><i class="chip gate"></i> ngưỡng</span>
+      <span><i class="chip ok"></i> kết thúc</span>
+    </div>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="kicker">Chuẩn bị — làm 1 lần</div>
+  <h2>Trước khi kê khai lần đầu</h2>
+  <table>
+    <tr><th>Việc</th><th>Chi tiết</th></tr>
+    <tr><td><b>Mã số thuế (MST)</b></td><td>HKD được cấp tự động khi đăng ký. MST cá nhân dùng chung được.</td></tr>
+    <tr class="hl"><td><b>eTax Mobile</b></td><td>Tải app → Đăng ký → Nhập MST + SĐT → Xác thực qua <b>ngân hàng</b> hoặc <b>VNeID</b>. Nhanh nhất, không cần đến cơ quan thuế.</td></tr>
+    <tr><td><b>Chữ ký số</b> (nếu &gt; 1 tỷ)</td><td>USB token hoặc Remote Signing. Giá ~300–800k/năm (VNPT CA, Viettel CA, BKAV, MISA eSign).</td></tr>
+    <tr class="hl"><td><b>Phần mềm hỗ trợ</b></td><td>eTax Mobile (miễn phí) · MISA eShop (miễn phí cho &lt; 1 tỷ) · thuedientu.gdt.gov.vn</td></tr>
+  </table>
+  <div class="note">HKD &lt; 1 tỷ: <b>không bắt buộc chữ ký số</b> — dùng OTP gửi SĐT để gửi thông báo doanh thu là đủ.</div>
+</section>
+
+<section id="s2">
+  <div class="kicker">Kê khai quý</div>
+  <h2>HKD &gt; 1 tỷ — từng bước trên eTax</h2>
+
+  <div class="step-flow">
+    <div class="st"><b>1. Đăng nhập</b>thuedientu.gdt.gov.vn<br>hoặc eTax Mobile</div>
+    <div class="arr">→</div>
+    <div class="st"><b>2. Chọn mẫu</b>01/CNKD<br>kỳ quý</div>
+    <div class="arr">→</div>
+    <div class="st"><b>3. Nhập doanh thu</b>[21] DT tính thuế GTGT<br>[22] DT tính thuế TNCN</div>
+    <div class="arr">→</div>
+    <div class="st"><b>4. Tỷ lệ %</b>[23] GTGT: 1–5%<br>[24] TNCN: 0,5–5%</div>
+    <div class="arr">→</div>
+    <div class="st"><b>5. Hệ thống tính</b>[25]=[21]×[23]<br>[26]=[22]×[24]</div>
+    <div class="arr">→</div>
+    <div class="st"><b>6. Ký + gửi</b>OTP / chữ ký số<br>→ "Nộp thành công"</div>
+    <div class="arr">→</div>
+    <div class="st"><b>7. Nộp tiền</b>eTax Mobile / NH<br>cùng hạn tờ khai</div>
+  </div>
+
+  <h2 style="margin-top:18px">Tỷ lệ % thuế theo ngành</h2>
+  <table>
+    <tr><th>Ngành</th><th>GTGT</th><th>TNCN</th></tr>
+    <tr><td>Phân phối hàng hóa</td><td>1%</td><td>0,5%</td></tr>
+    <tr class="hl"><td><b>Dịch vụ (CNTT, phần mềm)</b></td><td><b>5%</b> (0% nếu là sản phẩm phần mềm)</td><td><b>2%</b></td></tr>
+    <tr><td>Sản xuất, gia công, vận tải</td><td>3%</td><td>1,5%</td></tr>
+    <tr><td>Nội dung số, game, quảng cáo số</td><td>5%</td><td>5%</td></tr>
+    <tr><td>Hoạt động khác</td><td>5%</td><td>2%</td></tr>
+  </table>
+  <div class="callout">
+    <b>Ví dụ:</b> HKD cung cấp dịch vụ CNTT, doanh thu quý 300 triệu.
+    <p>Thuế GTGT = 300tr × 2% = <b>6 triệu</b>. Thuế TNCN = 300tr × 0,5% = <b>1,5 triệu</b>. <b>Tổng nộp quý = 7,5 triệu.</b></p>
+  </div>
+
+  <h2 style="margin-top:18px">Nộp tiền thuế</h2>
+  <table>
+    <tr><th>Phương thức</th><th>Thao tác</th></tr>
+    <tr><td><b>eTax Mobile</b></td><td>Nộp thuế → Chọn khoản thu → Chọn ngân hàng liên kết → Xác nhận</td></tr>
+    <tr><td><b>Cổng Thuế điện tử</b></td><td>thuedientu.gdt.gov.vn → Nộp thuế → Chọn ngân hàng</td></tr>
+    <tr><td><b>Ngân hàng TM</b></td><td>Điền giấy nộp NSNN, nộp tại quầy</td></tr>
+    <tr class="hl"><td colspan="2"><b>Hạn nộp tiền = hạn nộp tờ khai</b> (30 tháng đầu quý sau). Chậm: 0,03%/ngày.</td></tr>
+  </table>
+</section>
+
+<section id="s3">
+  <div class="kicker">Thông báo doanh thu</div>
+  <h2>HKD ≤ 1 tỷ — mẫu 01/TKN-CNKD</h2>
+  <ul>
+    <li>Đăng nhập eTax → <b>"Thông báo doanh thu"</b> → Mẫu <b>01/TKN-CNKD</b></li>
+    <li>Điền tổng doanh thu thực tế 6 tháng / cả năm (không cần chi tiết tháng).</li>
+    <li>Hệ thống tự động xác định <b>thuế = 0</b> nếu doanh thu ≤ 1 tỷ.</li>
+    <li>Ký (hoặc OTP) → Nộp.</li>
+  </ul>
+  <p><b>Hạn:</b> 31/07 (6T đầu) &amp; 31/01 năm sau (6T cuối), hoặc gộp 1 lần 31/01.</p>
+  <div class="note"><b>Quan trọng:</b> dù miễn thuế, <b>vẫn phải nộp tờ khai</b>. Không nộp có thể bị phạt.</div>
+</section>
+
+<section id="s4">
+  <div class="kicker">HĐĐT</div>
+  <h2>Hóa đơn điện tử &amp; quyết toán</h2>
+  <table>
+    <tr><th>Việc</th><th>HKD &gt; 1 tỷ</th><th>HKD ≤ 1 tỷ</th></tr>
+    <tr><td>Hóa đơn điện tử</td><td><b>Bắt buộc</b> — đăng ký mẫu 01/ĐKTĐ-HĐĐT trên eTax. Nhà cung cấp: MISA, BKAV, Viettel, FPT.</td><td>Không bắt buộc</td></tr>
+    <tr><td>Quyết toán TNCN</td><td><b>Phải</b> — mẫu 02/CNKD-TNCN-QTT, hạn 30/04 năm sau</td><td>Không cần</td></tr>
+    <tr><td>Lưu chứng từ</td><td colspan="2">≥ 10 năm: tờ khai, sao kê NH, HĐĐT, báo cáo doanh thu nền tảng</td></tr>
+  </table>
+</section>
+
+<section id="s5">
+  <div class="kicker">Sai lầm & khắc phục</div>
+  <h2>Các lỗi thường gặp & cách xử lý</h2>
+  <div class="mistake">
+    <div class="card"><h4>Sai chỉ tiêu</h4><p>Nhập sai doanh thu, tỷ lệ % hoặc nhầm ngành nghề → chênh thuế, truy thu.</p><div class="fix">↳ Nộp tờ khai bổ sung (chọn "Khai bổ sung") trên eTax</div></div>
+    <div class="card"><h4>Quên ký số</h4><p>Tờ khai không hợp lệ, không được chấp nhận.</p><div class="fix">↳ Kiểm tra USB token còn hạn → ký lại → gửi</div></div>
+    <div class="card"><h4>Nộp thiếu tiền</h4><p>Bị tính chậm nộp 0,03%/ngày trên số chậm.</p><div class="fix">↳ Nộp bổ sung ngay; không cần tờ khai mới</div></div>
+    <div class="card"><h4>Chậm nộp tờ khai</h4><p>Phạt 2–5tr (1–30 ngày) đến 15–30tr (&gt; 90 ngày).</p><div class="fix">↳ Nộp ngay khi phát hiện + nộp tiền phạt</div></div>
+    <div class="card"><h4>Không thông báo DT</h4><p>Dù ≤ 1 tỷ, không thông báo vẫn bị phạt.</p><div class="fix">↳ Nhập eTax → Thông báo bổ sung → Gửi</div></div>
+    <div class="card"><h4>Lỗi kỹ thuật</h4><p>Không vào được eTax, lỗi XML, chứng thư số hết hạn.</p><div class="fix">↳ Tổng đài eTax 📞 <b>1900 599 999</b> hoặc hỏi CQT quản lý</div></div>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="kicker">Lịch năm</div>
+  <h2>Các hạn kê khai & nộp thuế 2026</h2>
+  <div class="timeline">
+    <div class="q">
+      <h4>Q1</h4><div class="mon">tháng 1 – 3</div>
+      <ul>
+        <li><b>30/01</b> — nộp thuế Q4 trước</li>
+        <li><b>31/01</b> — thông báo DT 6T cuối trước</li>
+        <li><b>30/04</b> — nộp Q1 + QT năm trước</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q2</h4><div class="mon">tháng 4 – 6</div>
+      <ul>
+        <li><b>30/04</b> — quyết toán TNCN</li>
+        <li><b>31/07</b> — nộp Q2</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q3</h4><div class="mon">tháng 7 – 9</div>
+      <ul>
+        <li><b>31/07</b> — thông báo DT 6T đầu</li>
+        <li><b>31/10</b> — nộp Q3</li>
+      </ul>
+    </div>
+    <div class="q">
+      <h4>Q4</h4><div class="mon">tháng 10 – 12</div>
+      <ul>
+        <li><b>31/01</b> — nộp Q4 + thông báo DT cả năm</li>
+        <li>Rà soát ngưỡng 1 tỷ cho sang năm</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Xem tiếp:</b> <a href="../Thue-HKD-VN-2026/01-quy-trinh-mo-hkd.html">Quy trình mở hộ kinh doanh</a> · <a href="../Thue-HKD-VN-2026/02-thue-hkd-2026.html">Thuế HKD 2026</a></p>
+  <p style="margin-top:6px">⚠️ Miễn trừ: thông tin tham khảo, không phải tư vấn thuế. Thủ tục trên eTax có thể thay đổi. Đối chiếu hướng dẫn trên thuedientu.gdt.gov.vn trước khi thực hiện. Mốc 19/10/2026.</p>
+</footer>
+</div>
+
+<button id="theme" type="button" aria-label="Giao diện">☾</button>
+<script>
+var btn=document.getElementById("theme");
+function sync(){btn.textContent=document.documentElement.classList.contains("dark")?"☀":"☾";}
+btn.addEventListener("click",function(){
+  var w=!document.documentElement.classList.contains("dark");
+  document.documentElement.classList.toggle("dark",w);
+  try{localStorage.setItem("theme",w?"dark":"light");}catch(e){}
+  sync();
+});
+sync();
+</script>
+</body>
+</html>
